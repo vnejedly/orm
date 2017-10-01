@@ -1,0 +1,28 @@
+{
+  "type": "library",
+  "name": "hooloovoo/orm",
+  "description": "Object-Relation Mapping library based on \"databse first\" principle",
+  "keywords": ["orm", "object-relation mapper", "persistence"],
+  "homepage": "https://github.com/vnejedly/orm",
+  "license": "MIT",
+  "authors": [{
+    "name": "Vladislav Nejedlý",
+    "email": "vladislav.nejedly@gmail.com",
+    "homepage": "https://www.linkedin.com/in/vladislav-nejedl%C3%BD-7140117b"
+  }],
+  "autoload": {
+    "psr-4": {
+      "Hooloovoo\\ORM\\": "src/"
+    }
+  },
+  "require": {
+    "php": ">=7.0.0",
+    "hooloovoo/di": "@dev",
+    "hooloovoo/config": "@dev",
+    "hooloovoo/query-engine": "@dev",
+    "hooloovoo/database": "@dev",
+    "hooloovoo/db-mapping": "@dev",
+    "hooloovoo/generator": "@dev",
+    "hooloovoo/data-objects": "@dev"
+  }
+}

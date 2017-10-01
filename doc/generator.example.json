@@ -1,0 +1,20 @@
+{
+  "database": {
+    "host": "localhost",
+    "schema": "wellcommerce",
+    "user": "root",
+    "password": "root"
+  },
+  "entity": {
+    "namespace": "Hooloovoo\\ORM\\Testing\\Entity",
+    "directory": "/../src/Testing/Entity"
+  },
+  "tableDescriptor": {
+    "namespace": "Hooloovoo\\ORM\\Testing\\TableDescriptor",
+    "directory": "/../src/Testing/TableDescriptor"
+  },
+  "entityManager": {
+    "namespace": "Hooloovoo\\ORM\\Testing\\EntityManager",
+    "directory": "/../src/Testing/EntityManager"
+  }
+}

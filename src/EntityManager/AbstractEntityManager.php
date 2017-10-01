@@ -1,0 +1,394 @@
+<?php
+namespace Hooloovoo\ORM\EntityManager;
+
+use Hooloovoo\Database\Database;
+use Hooloovoo\DatabaseMapping\Descriptor\Table\TableInterface as TableDescriptor;
+use Hooloovoo\DatabaseMapping\Table as TableMapping;
+use Hooloovoo\DataObjects\DataObjectInterface;
+use Hooloovoo\ORM\Cache\CacheInterface;
+use Hooloovoo\ORM\Exception\EntityNotFoundException;
+use Hooloovoo\ORM\Exception\LogicException;
+use Hooloovoo\QueryEngine\Query\Query;
+
+/**
+ * Class AbstractEntityManager
+ */
+abstract class AbstractEntityManager implements EntityManagerInterface
+{
+    /** @var Database */
+    protected $_database;
+
+    /** @var TableMapping */
+    protected $_tableMapping;
+
+    /** @var CacheInterface */
+    protected $_cache;
+
+    /** @var bool */
+    protected $_cachingEngineOn = false;
+
+    /**
+     * @param string $conditionString
+     * @return EQLQuery
+     */
+    public function getEQLQuery(string $conditionString = '') : EQLQuery
+    {
+        return new EQLQuery($conditionString, $this->_tableMapping);
+    }
+
+    /**
+     * @return TableMapping
+     */
+    public function getTableMapping() : TableMapping
+    {
+        return $this->_tableMapping;
+    }
+
+    /**
+     * @return Database
+     */
+    public function getDatabase() : Database
+    {
+        return $this->_database;
+    }
+
+    /**
+     * @param EQLQuery $query
+     * @return int
+     */
+    public function getCount(EQLQuery $query) : int
+    {
+        $resultSet = $this->_database->getConnectionSlave()->execute($query)->fetchAll(false);
+        return (int) $resultSet[0][0];
+    }
+
+    /**
+     * @param int $primaryKey
+     */
+    public function delete(int $primaryKey)
+    {
+        $this->_getByPrimaryKey($primaryKey); // try to load the object in order to throw an exception if not exists
+
+        $query = $this->_database->createQuery("
+            DELETE FROM {$this->_tableMapping->getName()} 
+            WHERE {$this->_tableMapping->getSimplePrimaryKey()->getColumnName()} = :primaryKey
+        ");
+        $query->addParam('primaryKey', $primaryKey, Database::PARAM_INT);
+        $this->_database->getConnectionMaster()->execute($query);
+    }
+
+    /**
+     * @param DataObjectInterface $dataObject
+     * @param bool $returnObject
+     * @return mixed
+     */
+    protected function _create(DataObjectInterface $dataObject, bool $returnObject = true)
+    {
+        $columnNames = [];
+        $placeHolders = [];
+        $data = []; /** @var DOFieldDBTypeMapping[] $data */
+
+        foreach ($this->_tableMapping->getColumns() as $column) {
+            if ($column->getIsAutoIncrement()) {
+                continue;
+            }
+
+            $columnName = $column->getColumnName();
+            $fieldName = $column->getEntityFieldName();
+
+            $columnNames[] = "`$columnName`";
+            $placeHolders[] = ":$columnName";
+
+            $data[$columnName] = new DOFieldDBTypeMapping($dataObject->getField($fieldName));
+        }
+
+        $implodedColumnNames = implode(', ', $columnNames);
+        $implodedPlaceholders = implode(', ', $placeHolders);
+
+        $query = $this->_database->createQuery("
+            INSERT INTO {$this->_tableMapping->getName()} ($implodedColumnNames) 
+            VALUES ($implodedPlaceholders)
+        ");
+
+        foreach ($data as $columnName => $field) {
+            $query->addParam($columnName, $field->getInsertValue(), $field->getInsertType());
+        }
+
+        $this->_database->getConnectionMaster()->execute($query);
+
+        if ($returnObject) {
+            return $this->_getByPrimaryKey($this->_database->getConnectionMaster()->getLastInsertedId());
+        }
+    }
+
+    /**
+     * @param int $primaryKey
+     * @param DataObjectInterface $dataObject
+     * @param bool $returnObject
+     * @return mixed
+     */
+    protected function _replace(int $primaryKey, DataObjectInterface $dataObject, bool $returnObject = true)
+    {
+        $values = $dataObject->getSerialized();
+        $primaryKeyFieldName = $this->_tableMapping->getSimplePrimaryKey()->getEntityFieldName();
+        unset ($values[$primaryKeyFieldName]);
+
+        return $this->_update($primaryKey, $values, $returnObject);
+    }
+
+    /**
+     * @param int $primaryKey
+     * @param array $fieldValues
+     * @param bool $returnObject
+     * @return mixed
+     */
+    protected function _update(int $primaryKey, array $fieldValues, bool $returnObject = true)
+    {
+        if (0 == count($fieldValues)) {
+            throw new LogicException("At least one field must be specified");
+        }
+
+        $parts = [];
+        foreach ($fieldValues as $field => $value) {
+            $column = $this->_tableMapping->getColumnForField($field);
+            if ($column == $this->_tableMapping->getSimplePrimaryKey()->getColumnName()) {
+                throw new LogicException("Cannot update primary key field $field");
+            }
+
+            $parts[] = "`$column` = :$field";
+        }
+
+        $this->_getByPrimaryKey($primaryKey); // try to load the object in order to throw an exception if not exists
+
+        $setString = implode(', ', $parts);
+
+        $query = $this->_database->createQuery("
+            UPDATE {$this->_tableMapping->getName()} SET $setString 
+            WHERE {$this->_tableMapping->getSimplePrimaryKey()->getColumnName()} = :primaryKey
+        ");
+
+        foreach ($fieldValues as $field => $value) {
+            $query->addParam($field, $value, Database::PARAM_STR);
+        }
+
+        $query->addParam('primaryKey', $primaryKey, Database::PARAM_STR);
+        $this->_database->getConnectionMaster()->execute($query);
+
+        if ($returnObject) {
+            return $this->_getByPrimaryKey($primaryKey);
+        }
+    }
+
+    /**
+     * @param int $primaryKey
+     * @return mixed
+     */
+    protected function _getByPrimaryKey(int $primaryKey)
+    {
+        return $this->_getByPrimaryKeys([$primaryKey])[$primaryKey];
+    }
+
+    /**
+     * @param int[] $primaryKeys
+     * @return mixed[]
+     */
+    protected function _getByPrimaryKeys(array $primaryKeys) : array
+    {
+        if (count($primaryKeys) == 0) {
+            return [];
+        }
+
+        $query = $this->getEQLQuery("
+            SELECT {*} FROM {@} 
+            WHERE `{$this->_tableMapping->getSimplePrimaryKey()->getColumnName()}` IN (:primaryKeys)
+        ");
+
+        $query->addMultiParam('primaryKeys', $primaryKeys, Database::PARAM_INT);
+        $dataObjects = $this->_getObjects($query);
+
+        if (count($dataObjects) != count($primaryKeys)) {
+            $missingKeys = implode(', ', array_diff($primaryKeys, array_keys($dataObjects)));
+            throw new EntityNotFoundException("Entities not found ($missingKeys)");
+        }
+
+        return $dataObjects;
+    }
+
+    /**
+     * @param EQLQuery $query
+     * @return mixed[]
+     */
+    protected function _getObjects(EQLQuery $query) : array
+    {
+        $resultSet = $this->_database->getConnectionSlave()->execute($query)->fetchAll();
+        return $this->_getCollectionFromResultSet($resultSet);
+    }
+
+    /**
+     * @param EQLQuery $query
+     * @return mixed
+     */
+    protected function _getObject(EQLQuery $query)
+    {
+        $collection = $this->_getObjects($query);
+
+        if (count($collection) < 1) {
+            throw new EntityNotFoundException($this->getTableMapping()->getEntityName());
+        }
+
+        return array_shift($collection);
+    }
+
+    /**
+     * @param Query $query
+     * @param EQLQuery $condition
+     * @return mixed[]
+     */
+    protected function _getByQueryEngine(Query $query, EQLQuery $condition = null) : array
+    {        
+        if (is_null($condition)) {
+            $eqlQuery = $this->getEQLQuery('SELECT {*} FROM {@}');
+            $appendWith = 'WHERE';
+        } else{
+            $eqlQuery = $this->getEQLQuery('SELECT {*} FROM {@} {&precondition}');
+            $eqlQuery->addSubQuery('precondition', $condition);
+            $appendWith = 'AND';
+        }
+
+        $eqlConnector = new QueryEngineConnector($eqlQuery, $appendWith);
+        $eqlConnector->applyQuery($query);
+
+        return $this->_getObjects($eqlQuery);
+    }
+
+    /**
+     * @param string $fieldName
+     * @param mixed $value
+     * @param int $type
+     * @return mixed
+     */
+    protected function _getObjectByField(string $fieldName, $value, int $type = Database::PARAM_STR)
+    {
+        $query = $this->getEQLQuery('SELECT {*} FROM {@} WHERE {' . $fieldName . '} = :val LIMIT 1');
+        $query->addParam('val', $value, $type);
+
+        return $this->_getObject($query);
+    }
+
+    /**
+     * @param string $fieldName
+     * @param mixed $value
+     * @param int $type
+     * @return mixed[]
+     */
+    protected function _getObjectsByField(string $fieldName, $value, int $type = Database::PARAM_STR) : array
+    {
+        $query = $this->getEQLQuery('SELECT {*} FROM {@} WHERE {' . $fieldName . '} = :val');
+        $query->addParam('val', $value, $type);
+
+        return $this->_getObjects($query);
+    }
+
+    /**
+     * @param array $fieldSet
+     * @return mixed
+     */
+    protected function _getObjectByFieldSet(array $fieldSet)
+    {
+        $collection = $this->_getObjectsByFieldSet($fieldSet);
+
+        if (count($collection) < 1) {
+            throw new EntityNotFoundException($this->getTableMapping()->getEntityName());
+        }
+
+        return array_shift($collection);
+    }
+
+    /**
+     * @param array $fieldSet
+     * @return mixed[]
+     */
+    protected function _getObjectsByFieldSet(array $fieldSet) : array
+    {
+        $subConditions = [];
+        foreach ($fieldSet as $name => $field) {
+            $subConditions[] = '{' . $name . '} = :' . $name;
+        }
+
+        if (count($fieldSet) > 0) {
+            $condition = implode(' AND ', $subConditions);
+        } else {
+            $condition = 1;
+        }
+
+        $query = $this->getEQLQuery("SELECT {*} FROM {@} WHERE $condition");
+
+        foreach ($fieldSet as $name => $field) {
+            $query->addParam($name, $field[0], $field[1]);
+        }
+
+        return $this->_getObjects($query);
+    }
+
+    /**
+     * @param array $resultSet
+     * @return mixed[]
+     */
+    protected function _getCollectionFromResultSet(array $resultSet) : array
+    {
+        $primaryKeyName = $this->_tableMapping->getSimplePrimaryKey()->getColumnName();
+
+        $dataObjects = [];
+        foreach ($resultSet as $resultRow) {
+            $primaryKey = $resultRow[$primaryKeyName];
+            $dataObjects[$primaryKey] = $this->_getEntityFromRow($resultRow);
+        }
+
+        return $dataObjects;
+    }
+
+    /**
+     * @param array $resultSet
+     * @return mixed[]
+     */
+    protected function _getCollectionFromPrefixedResultSet(array $resultSet) : array
+    {
+        $tableName = $this->_tableMapping->getName();
+        $primaryKeyName = $this->_tableMapping->getSimplePrimaryKey()->getColumnName();
+        $columnNames = $this->_tableMapping->getColumnNames();
+
+        $dataObjects = [];
+        foreach ($resultSet as $resultRow) {
+            $unPrefixedRow = [];
+            foreach ($columnNames as $columnName) {
+                $prefixedColumnName = "$tableName.$columnName";
+                if (!array_key_exists($prefixedColumnName, $resultRow)) {
+                    throw new LogicException("Column $prefixedColumnName not present in result set");
+                }
+
+                $unPrefixedRow[$columnName] = $resultRow[$prefixedColumnName];
+            }
+
+            $primaryKey = $unPrefixedRow[$primaryKeyName];
+            if (!is_null($primaryKey)) {
+                $dataObjects[$primaryKey] = $this->_getEntityFromRow($unPrefixedRow);
+            }
+        }
+
+        return $dataObjects;
+    }
+
+    /**
+     * @param TableDescriptor $tableDescriptor
+     */
+    protected function _resolveMapping(TableDescriptor $tableDescriptor)
+    {
+        $this->_tableMapping = new TableMapping($tableDescriptor);
+    }
+
+    /**
+     * @param array $data
+     * @return DataObjectInterface
+     */
+    abstract protected function _getEntityFromRow(array $data) : DataObjectInterface ;
+}

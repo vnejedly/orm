@@ -1,0 +1,329 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "b2c13c40a5279b0cc3f90caf79b2f737",
+    "packages": [
+        {
+            "name": "hooloovoo/config",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/vnejedly/config.git",
+                "reference": "b8d73bc676895bea10152756cc1baaa2c881edd7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/vnejedly/config/zipball/b8d73bc676895bea10152756cc1baaa2c881edd7",
+                "reference": "b8d73bc676895bea10152756cc1baaa2c881edd7",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.0.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Hooloovoo\\DI\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Vladislav Nejedlý",
+                    "email": "vladislav.nejedly@gmail.com",
+                    "homepage": "https://www.linkedin.com/in/vladislav-nejedl%C3%BD-7140117b"
+                }
+            ],
+            "description": "Simple configuration tool",
+            "homepage": "https://github.com/vnejedly/config",
+            "keywords": [
+                "config"
+            ],
+            "time": "2017-10-01T22:15:40+00:00"
+        },
+        {
+            "name": "hooloovoo/data-objects",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/vnejedly/data-objects.git",
+                "reference": "96d907b871c53af4a1655e3ed822c4ee9dd99831"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/vnejedly/data-objects/zipball/96d907b871c53af4a1655e3ed822c4ee9dd99831",
+                "reference": "96d907b871c53af4a1655e3ed822c4ee9dd99831",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.0.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Hooloovoo\\DataObjects\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Vladislav Nejedlý",
+                    "email": "vladislav.nejedly@gmail.com",
+                    "homepage": "https://www.linkedin.com/in/vladislav-nejedl%C3%BD-7140117b"
+                }
+            ],
+            "description": "Simple serializable read-only entity abstraction library with data-typed fields",
+            "homepage": "https://github.com/vnejedly/data-objects",
+            "keywords": [
+                "data object",
+                "entity"
+            ],
+            "time": "2017-10-01T22:17:05+00:00"
+        },
+        {
+            "name": "hooloovoo/database",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/vnejedly/database.git",
+                "reference": "e4dde487aa28eb47ef54e61f52025748e5100204"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/vnejedly/database/zipball/e4dde487aa28eb47ef54e61f52025748e5100204",
+                "reference": "e4dde487aa28eb47ef54e61f52025748e5100204",
+                "shasum": ""
+            },
+            "require": {
+                "hooloovoo/di": "@dev",
+                "php": ">=7.0.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Hooloovoo\\Database\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Vladislav Nejedlý",
+                    "email": "vladislav.nejedly@gmail.com",
+                    "homepage": "https://www.linkedin.com/in/vladislav-nejedl%C3%BD-7140117b"
+                }
+            ],
+            "description": "Database wrapper with support of persistent connection and replication Edit Add topics",
+            "homepage": "https://github.com/vnejedly/database",
+            "keywords": [
+                "database",
+                "persistent",
+                "replication",
+                "wrapper"
+            ],
+            "time": "2017-10-01T22:24:27+00:00"
+        },
+        {
+            "name": "hooloovoo/db-mapping",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/vnejedly/db-mapping.git",
+                "reference": "05829e68bbdfe578dc92ee8f3086bc28d71638db"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/vnejedly/db-mapping/zipball/05829e68bbdfe578dc92ee8f3086bc28d71638db",
+                "reference": "05829e68bbdfe578dc92ee8f3086bc28d71638db",
+                "shasum": ""
+            },
+            "require": {
+                "hooloovoo/database": "@dev",
+                "hooloovoo/di": "@dev",
+                "php": ">=7.0.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Hooloovoo\\DatabaseMapping\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Vladislav Nejedlý",
+                    "email": "vladislav.nejedly@gmail.com",
+                    "homepage": "https://www.linkedin.com/in/vladislav-nejedl%C3%BD-7140117b"
+                }
+            ],
+            "description": "Simple library for MySQL database mapping",
+            "homepage": "https://github.com/vnejedly/db-mapping",
+            "keywords": [
+                "database info",
+                "database mapping"
+            ],
+            "time": "2017-10-01T22:29:42+00:00"
+        },
+        {
+            "name": "hooloovoo/di",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/vnejedly/di.git",
+                "reference": "4eb0f12578684e992b9544c57a1192bf8ae69d0c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/vnejedly/di/zipball/4eb0f12578684e992b9544c57a1192bf8ae69d0c",
+                "reference": "4eb0f12578684e992b9544c57a1192bf8ae69d0c",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.0.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Hooloovoo\\DI\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Vladislav Nejedlý",
+                    "email": "vladislav.nejedly@gmail.com",
+                    "homepage": "https://www.linkedin.com/in/vladislav-nejedl%C3%BD-7140117b"
+                }
+            ],
+            "description": "Simple DI container with auto-wiring",
+            "homepage": "https://github.com/vnejedly/di",
+            "keywords": [
+                "auto-wiring",
+                "container",
+                "dependency injection",
+                "di"
+            ],
+            "time": "2017-10-01T22:12:27+00:00"
+        },
+        {
+            "name": "hooloovoo/generator",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/vnejedly/generator.git",
+                "reference": "86ac3a58606548f57c07a4d1a8ba9450dc8aa833"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/vnejedly/generator/zipball/86ac3a58606548f57c07a4d1a8ba9450dc8aa833",
+                "reference": "86ac3a58606548f57c07a4d1a8ba9450dc8aa833",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.0.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Hooloovoo\\Generator\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Vladislav Nejedlý",
+                    "email": "vladislav.nejedly@gmail.com",
+                    "homepage": "https://www.linkedin.com/in/vladislav-nejedl%C3%BD-7140117b"
+                }
+            ],
+            "description": "Simple code generator",
+            "homepage": "https://github.com/vnejedly/generator",
+            "keywords": [
+                "code generator"
+            ],
+            "time": "2017-10-01T22:42:43+00:00"
+        },
+        {
+            "name": "hooloovoo/query-engine",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/vnejedly/query-engine.git",
+                "reference": "e5ceb9850a47340fbc0c81adc72d9851819c3f15"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/vnejedly/query-engine/zipball/e5ceb9850a47340fbc0c81adc72d9851819c3f15",
+                "reference": "e5ceb9850a47340fbc0c81adc72d9851819c3f15",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.0.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Hooloovoo\\QueryEngine\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Vladislav Nejedlý",
+                    "email": "vladislav.nejedly@gmail.com",
+                    "homepage": "https://www.linkedin.com/in/vladislav-nejedl%C3%BD-7140117b"
+                }
+            ],
+            "description": "Simple abstraction for implementing server-side Paging, Sorting and Filtering",
+            "homepage": "https://github.com/vnejedly/query-engine",
+            "keywords": [
+                "filter",
+                "pager",
+                "sorter",
+                "url query"
+            ],
+            "time": "2017-10-01T22:51:24+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": {
+        "hooloovoo/di": 20,
+        "hooloovoo/config": 20,
+        "hooloovoo/query-engine": 20,
+        "hooloovoo/database": 20,
+        "hooloovoo/db-mapping": 20,
+        "hooloovoo/generator": 20,
+        "hooloovoo/data-objects": 20
+    },
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": {
+        "php": ">=7.0.0"
+    },
+    "platform-dev": []
+}
