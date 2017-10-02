@@ -78,12 +78,8 @@ class FieldInfo
      */
     public function getDeclaration() : string
     {
-        $declaration = $this->_fieldDef->getDeclaration($this->_name);
-        if ($this->_nullAble) {
-            $declaration = "$declaration = null";
-        }
-
-        return $declaration;
+        $fieldName = $this->_fieldDef->getDeclaration($this->_name);
+        return "$fieldName = null";
     }
 
     /**

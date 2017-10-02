@@ -50,28 +50,6 @@ class <?= $managerName ?> extends AbstractEntityManager
     }
 
     /**
-    <?php foreach ($nonPKFields as $field): ?>
-     * @param <?= $field->getAnnotation() ?>
-    <?php endforeach; ?>
-     * @return Entity
-     */
-    public function getInputEntity(
-        <?php foreach ($nonPKFields as $field): ?>
-        <?= $field->getDeclaration() ?><?= $this->_delimit($nonPKFields, ',') ?>
-        <?php endforeach; ?>
-    ) {
-        return $this->_getNewEntity(
-        <?php foreach ($fields as $field): ?>
-            <?php if ($field->getColumn()->getIsAutoIncrement()): ?>
-            null<?= $this->_delimit($fields, ',') ?>
-            <?php else: ?>
-            $<?= $field->getName() ?><?= $this->_delimit($fields, ',') ?>
-            <?php endif; ?>
-        <?php endforeach; ?>
-        );
-    }
-
-    /**
      * @param int $primaryKey
      * @return Entity
      */
@@ -199,12 +177,19 @@ class <?= $managerName ?> extends AbstractEntityManager
     }
 
     /**
+     * @return Entity
+     */
+    public function getNewEntity() : Entity {
+        return new Entity();
+    }
+
+    /**
      * @param array $data
      * @return DataObjectInterface
      */
     protected function _getEntityFromRow(array $data) : DataObjectInterface
     {
-        return $this->_getNewEntity(
+        return new Entity(
         <?php foreach ($fields as $field): ?>
             <?php if ($field->isValueObject()): ?>
             new <?= $field->getValueClassAlias() ?>($data['<?= $field->getColumn()->getColumnName() ?>'])<?= $this->_delimit($fields, ',') ?>
@@ -212,25 +197,6 @@ class <?= $managerName ?> extends AbstractEntityManager
             $data['<?= $field->getColumn()->getColumnName() ?>']<?= $this->_delimit($fields, ',') ?>
             <?php endif; ?>
         <?php endforeach; ?>
-        );
-    }
-
-    /**
-     <?php foreach ($fields as $field): ?>
-     * @param <?= $field->getAnnotation() ?>
-     <?php endforeach; ?>
-     * @return Entity
-     */
-    protected function _getNewEntity(
-        <?php foreach ($fields as $field): ?>
-        <?= $field->getDeclaration() ?><?= $this->_delimit($fields, ',') ?>
-        <?php endforeach; ?>
-    )
-    : Entity {
-        return new Entity(
-            <?php foreach ($fields as $field): ?>
-            $<?= $field->getName() ?><?= $this->_delimit($fields, ',') ?>
-            <?php endforeach; ?>
         );
     }
 }

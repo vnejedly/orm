@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/vnejedly/config.git",
-                "reference": "b8d73bc676895bea10152756cc1baaa2c881edd7"
+                "reference": "829dac4bbc34a1893427f1141a8fb61f876e41aa"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/vnejedly/config/zipball/b8d73bc676895bea10152756cc1baaa2c881edd7",
-                "reference": "b8d73bc676895bea10152756cc1baaa2c881edd7",
+                "url": "https://api.github.com/repos/vnejedly/config/zipball/829dac4bbc34a1893427f1141a8fb61f876e41aa",
+                "reference": "829dac4bbc34a1893427f1141a8fb61f876e41aa",
                 "shasum": ""
             },
             "require": {
@@ -26,7 +26,7 @@
             "type": "library",
             "autoload": {
                 "psr-4": {
-                    "Hooloovoo\\DI\\": "src/"
+                    "Hooloovoo\\Config\\": "src/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -45,7 +45,7 @@
             "keywords": [
                 "config"
             ],
-            "time": "2017-10-01T22:15:40+00:00"
+            "time": "2017-10-02T00:11:11+00:00"
         },
         {
             "name": "hooloovoo/data-objects",
@@ -53,12 +53,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/vnejedly/data-objects.git",
-                "reference": "96d907b871c53af4a1655e3ed822c4ee9dd99831"
+                "reference": "4722ef01615be5d9d63d22725398c388972706fb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/vnejedly/data-objects/zipball/96d907b871c53af4a1655e3ed822c4ee9dd99831",
-                "reference": "96d907b871c53af4a1655e3ed822c4ee9dd99831",
+                "url": "https://api.github.com/repos/vnejedly/data-objects/zipball/4722ef01615be5d9d63d22725398c388972706fb",
+                "reference": "4722ef01615be5d9d63d22725398c388972706fb",
                 "shasum": ""
             },
             "require": {
@@ -87,7 +87,7 @@
                 "data object",
                 "entity"
             ],
-            "time": "2017-10-01T22:17:05+00:00"
+            "time": "2017-10-02T23:28:35+00:00"
         },
         {
             "name": "hooloovoo/database",

@@ -23,7 +23,7 @@ use <?= $import ?>;
  * <?= $generatedDateTime->format('c') ?>
  *
  <?php foreach ($fields as $field): ?>
- * @property-read <?= $field->getAnnotation() ?>
+ * @property <?= $field->getAnnotation() ?>
  <?php endforeach; ?>
  */
 class <?= $className ?> extends DataObject
@@ -41,7 +41,7 @@ class <?= $className ?> extends DataObject
         <?php endforeach; ?>
     ) {
         <?php foreach ($fields as $field): ?>
-        $this->_addField('<?= $field->getName() ?>', new <?= $field->getInstanceCreation() ?>);
+        $this->addField('<?= $field->getName() ?>', new <?= $field->getInstanceCreation() ?>);
         <?php endforeach; ?>
     }
 }

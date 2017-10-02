@@ -29,9 +29,8 @@ use <?= $persistenceEntityNamespace ?>\<?= $entity ?>;
  *
  * <?= $generatedDateTime->format('c') ?>
  *
- * @property-read ParentComponent $<?= $parentComponent->getComponentFieldName() ?>
  <?php foreach ($fields as $field): ?>
- * @property-read <?= $field->getAnnotation() ?>
+ * @property <?= $field->getAnnotation() ?>
  <?php endforeach; ?>
  */
 class <?= $className ?> extends ParentComponent
@@ -50,9 +49,9 @@ class <?= $className ?> extends ParentComponent
         <?= $field->getDeclaration() ?><?= $this->_delimit($fields, ',') ?>
         <?php endforeach; ?>
     ) {
-        $this->_fetchSuperclassFields($<?= $parentComponent->getComponentFieldName() ?>);
+        $this->fetchSuperclassFields($<?= $parentComponent->getComponentFieldName() ?>);
         <?php foreach ($fields as $field): ?>
-        $this->_addField('<?= $field->getFieldName() ?>', new <?= $field->getFieldClass() ?>($<?= $field->getFieldName() ?>));
+        $this->addField('<?= $field->getFieldName() ?>', new <?= $field->getFieldClass() ?>($<?= $field->getFieldName() ?>));
         <?php endforeach; ?>
     }
 }
