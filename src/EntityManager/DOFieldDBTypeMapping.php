@@ -28,6 +28,9 @@ class DOFieldDBTypeMapping
     /** @var FieldInterface */
     protected $field;
 
+    /** @var array */
+    protected $conversionArray;
+
     /**
      * DOFieldDBTypeMapping constructor.
      * @param FieldInterface $field
@@ -35,6 +38,7 @@ class DOFieldDBTypeMapping
     public function __construct(FieldInterface $field)
     {
         $this->field = $field;
+        $this->conversionArray = $this->_getConversionArray();
     }
 
     /**
@@ -60,7 +64,21 @@ class DOFieldDBTypeMapping
             return null;
         }
 
-        $conversionArray = [
+        $type = $this->field->getType();
+
+        if (!array_key_exists($type, $this->conversionArray)) {
+            return (string) $this->field->getValue();
+        }
+
+        return $this->conversionArray[$type]($this->field);
+    }
+
+    /**
+     * @return array
+     */
+    protected function _getConversionArray() : array
+    {
+        return [
             FieldBool::TYPE => function (FieldBool $field) {
                 return (bool) $field->getValue();
             },
@@ -77,13 +95,5 @@ class DOFieldDBTypeMapping
                 return (string) $value->getValue()->format('Y-m-d H:i:s');
             }
         ];
-
-        $type = $this->field->getType();
-
-        if (!array_key_exists($type, $conversionArray)) {
-            return (string) $this->field->getValue();
-        }
-
-        return $conversionArray[$type]($this->field);
     }
 }

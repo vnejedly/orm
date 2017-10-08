@@ -53,12 +53,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/vnejedly/data-objects.git",
-                "reference": "4722ef01615be5d9d63d22725398c388972706fb"
+                "reference": "9b07ca8713f9ed64118e840092bd9280322f587e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/vnejedly/data-objects/zipball/4722ef01615be5d9d63d22725398c388972706fb",
-                "reference": "4722ef01615be5d9d63d22725398c388972706fb",
+                "url": "https://api.github.com/repos/vnejedly/data-objects/zipball/9b07ca8713f9ed64118e840092bd9280322f587e",
+                "reference": "9b07ca8713f9ed64118e840092bd9280322f587e",
                 "shasum": ""
             },
             "require": {
@@ -87,7 +87,7 @@
                 "data object",
                 "entity"
             ],
-            "time": "2017-10-02T23:28:35+00:00"
+            "time": "2017-10-08T17:02:58+00:00"
         },
         {
             "name": "hooloovoo/database",
