@@ -8,6 +8,7 @@ use Hooloovoo\DataObjects\DataObjectInterface;
 use Hooloovoo\ORM\Cache\CacheInterface;
 use Hooloovoo\ORM\Exception\EntityNotFoundException;
 use Hooloovoo\ORM\Exception\LogicException;
+use Hooloovoo\ORM\Exception\NonOriginalEntityException;
 use Hooloovoo\QueryEngine\Query\Query;
 
 /**
@@ -117,7 +118,15 @@ abstract class AbstractEntityManager implements EntityManagerInterface
         $this->_database->getConnectionMaster()->execute($query);
 
         if ($returnObject) {
-            return $this->_getByPrimaryKey($this->_database->getConnectionMaster()->getLastInsertedId());
+            $primaryKeyColumn = $this->_tableMapping->getSimplePrimaryKey();
+
+            if ($primaryKeyColumn->getIsAutoIncrement()) {
+                $primaryKey = $this->_database->getConnectionMaster()->getLastInsertedId();
+            } else {
+                $primaryKey = $dataObject->getField($primaryKeyColumn->getEntityFieldName())->getValue();
+            }
+
+            return $this->_getByPrimaryKey($primaryKey);
         }
     }
 
@@ -144,35 +153,57 @@ abstract class AbstractEntityManager implements EntityManagerInterface
      */
     protected function _update(int $primaryKey, array $fieldValues, bool $returnObject = true)
     {
-        if (0 == count($fieldValues)) {
-            throw new LogicException("At least one field must be specified");
+        $entity = $this->_getByPrimaryKey($primaryKey); /** @var DataObjectInterface $entity */
+
+        foreach ($fieldValues as $fieldName => $value) {
+            $entity->{$fieldName} = $value;
         }
 
+        return $this->_updateByEntity($entity, $returnObject);
+    }
+
+    /**
+     * @param DataObjectInterface $entity
+     * @param bool $returnObject
+     * @return mixed
+     */
+    protected function _updateByEntity(DataObjectInterface $entity, bool $returnObject = true)
+    {
         $parts = [];
-        foreach ($fieldValues as $field => $value) {
-            $column = $this->_tableMapping->getColumnForField($field);
-            if ($column == $this->_tableMapping->getSimplePrimaryKey()->getColumnName()) {
-                throw new LogicException("Cannot update primary key field $field");
+        $data = []; /** @var DOFieldDBTypeMapping[] $data */
+        $primaryKeyName = $this->_tableMapping->getSimplePrimaryKey()->getColumnName();
+        $primaryKey = null;
+
+        foreach ($this->_tableMapping->getEntityFieldNames() as $fieldName) {
+            $field = $entity->getField($fieldName);
+            $columnName = $this->_tableMapping->getColumnForField($fieldName);
+            if ($columnName == $primaryKeyName) {
+                if ($field->isUnlocked() || is_null($field->getValue())) {
+                    throw new NonOriginalEntityException($this->_tableMapping->getEntityName());
+                }
+
+                $primaryKey = $field->getValue();
+                $data['_primaryKey'] = new DOFieldDBTypeMapping($field);
+            } elseif ($field->isUnlocked()) {
+                $parts[] = "`$columnName` = :$fieldName";
+                $data[$fieldName] = new DOFieldDBTypeMapping($field);
+            }
+        }
+
+        if (count($parts) != 0) {
+            $setString = implode(', ', $parts);
+
+            $query = $this->_database->createQuery("
+                UPDATE {$this->_tableMapping->getName()} SET $setString 
+                WHERE {$this->_tableMapping->getSimplePrimaryKey()->getColumnName()} = :_primaryKey
+            ");
+
+            foreach ($data as $fieldName => $mapping) {
+                $query->addParam($fieldName, $mapping->getInsertValue(), $mapping->getInsertType());
             }
 
-            $parts[] = "`$column` = :$field";
+            $this->_database->getConnectionMaster()->execute($query);
         }
-
-        $this->_getByPrimaryKey($primaryKey); // try to load the object in order to throw an exception if not exists
-
-        $setString = implode(', ', $parts);
-
-        $query = $this->_database->createQuery("
-            UPDATE {$this->_tableMapping->getName()} SET $setString 
-            WHERE {$this->_tableMapping->getSimplePrimaryKey()->getColumnName()} = :primaryKey
-        ");
-
-        foreach ($fieldValues as $field => $value) {
-            $query->addParam($field, $value, Database::PARAM_STR);
-        }
-
-        $query->addParam('primaryKey', $primaryKey, Database::PARAM_STR);
-        $this->_database->getConnectionMaster()->execute($query);
 
         if ($returnObject) {
             return $this->_getByPrimaryKey($primaryKey);
@@ -330,6 +361,7 @@ abstract class AbstractEntityManager implements EntityManagerInterface
         return $this->_getObjects($query);
     }
 
+
     /**
      * @param array $resultSet
      * @return mixed[]
@@ -341,7 +373,7 @@ abstract class AbstractEntityManager implements EntityManagerInterface
         $dataObjects = [];
         foreach ($resultSet as $resultRow) {
             $primaryKey = $resultRow[$primaryKeyName];
-            $dataObjects[$primaryKey] = $this->_getEntityFromRow($resultRow);
+            $dataObjects[$primaryKey] = $this->getEntityFromRow($resultRow);
         }
 
         return $dataObjects;
@@ -371,7 +403,7 @@ abstract class AbstractEntityManager implements EntityManagerInterface
 
             $primaryKey = $unPrefixedRow[$primaryKeyName];
             if (!is_null($primaryKey)) {
-                $dataObjects[$primaryKey] = $this->_getEntityFromRow($unPrefixedRow);
+                $dataObjects[$primaryKey] = $this->getEntityFromRow($unPrefixedRow);
             }
         }
 
@@ -379,9 +411,17 @@ abstract class AbstractEntityManager implements EntityManagerInterface
     }
 
     /**
+     * @param Database $database
+     */
+    protected function setDatabase(Database $database)
+    {
+        $this->_database = $database;
+    }
+
+    /**
      * @param TableDescriptor $tableDescriptor
      */
-    protected function _resolveMapping(TableDescriptor $tableDescriptor)
+    protected function resolveMapping(TableDescriptor $tableDescriptor)
     {
         $this->_tableMapping = new TableMapping($tableDescriptor);
     }
@@ -390,5 +430,5 @@ abstract class AbstractEntityManager implements EntityManagerInterface
      * @param array $data
      * @return DataObjectInterface
      */
-    abstract protected function _getEntityFromRow(array $data) : DataObjectInterface ;
+    abstract protected function getEntityFromRow(array $data) : DataObjectInterface ;
 }

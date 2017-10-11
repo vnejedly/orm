@@ -47,7 +47,7 @@ class <?= $className ?> implements TableInterface
             <?php foreach ($columnsInfo as $column): ?>
             [
                 <?php foreach ($column as $key => $value): ?>
-                '<?= $key ?>' => '<?= $value ?>',
+                '<?= $key ?>' => <?= var_export($value, true) ?>,
                 <?php endforeach; ?>
             ],
             <?php endforeach; ?>

@@ -161,7 +161,7 @@ abstract class AbstractManager implements ManagerInterface
      */
     protected function _getByCondition(EQLQueryInterface $condition) : array
     {
-        $query = $this->getBasicCompositeSelect();
+        $query = $this->getBasicCompositeSelect('{*.$}');
         $query->append($condition->getQueryString());
 
         foreach ($condition->getParams() as $name => $param) {
@@ -208,7 +208,28 @@ abstract class AbstractManager implements ManagerInterface
         $eqlConnector = new QueryEngineConnector($condition, $appendWith);
         $eqlConnector->applyQuery($query);
 
-        return $this->_getByCondition($condition);
+        $primaryKeys = $this->_getPrimaryKeysByCondition($condition);
+
+        return $this->_getByPrimaryKeys($primaryKeys);
+    }
+
+    /**
+     * @param EQLQueryInterface $condition
+     * @return mixed[]
+     */
+    protected function _getPrimaryKeysByCondition(EQLQueryInterface $condition) : array
+    {
+        $query = $this->getBasicCompositeSelect('DISTINCT {@.#}');
+        $query->append($condition->getQueryString());
+
+        foreach ($condition->getParams() as $name => $param) {
+            $query->addParam($name, $param->getValue(), $param->getType());
+        }
+
+        $resultSet = $this->query($query);
+        $dataSetHelper = new DataSetHelper($resultSet);
+
+        return $dataSetHelper->getColumnValues($this->getTableMapping()->getSimplePrimaryKey()->getColumnName());
     }
 
     /**
@@ -218,9 +239,10 @@ abstract class AbstractManager implements ManagerInterface
     abstract protected function getEntityFromGroupedArray(GroupedArray $groupedArray);
 
     /**
+     * @param string $selection
      * @return EQLQueryInterface
      */
-    abstract protected function getBasicCompositeSelect() : EQLQueryInterface;
+    abstract protected function getBasicCompositeSelect(string $selection) : EQLQueryInterface;
 
     /**
      * @param Database $database

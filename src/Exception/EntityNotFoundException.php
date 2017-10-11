@@ -21,6 +21,7 @@ class EntityNotFoundException extends RuntimeException
         string $entityName,
         Exception $previous = null
     ) {
+        $this->_entityName = $entityName;
         parent::__construct("Entity not found ($entityName)", self::HTTP_CODE, $previous);
     }
 

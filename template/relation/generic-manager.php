@@ -65,12 +65,13 @@ class <?= $className ?> extends AbstractManager
     }
 
     /**
+     * @param string $selection
      * @return EQLQueryInterface
      */
-    protected function getBasicCompositeSelect(): EQLQueryInterface
+    protected function getBasicCompositeSelect(string $selection): EQLQueryInterface
     {
         return $this->getEQLQuery("
-            SELECT {*.$} FROM {<?= $parentComponent->getComponentTableMapping()->getEntityName() ?>}
+            SELECT $selection FROM {<?= $parentComponent->getComponentTableMapping()->getEntityName() ?>}
             <?php foreach ($fields as $field): ?>
             <?php foreach ($field->getJoinClauses() as $joinClause): ?>
             <?= $joinClause ?>

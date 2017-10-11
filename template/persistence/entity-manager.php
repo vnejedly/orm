@@ -45,8 +45,25 @@ class <?= $managerName ?> extends AbstractEntityManager
         Database $database,
         Descriptor $tableDescriptor
     ) {
-        $this->_database = $database;
-        $this->_resolveMapping($tableDescriptor);
+        $this->setDatabase($database);
+        $this->resolveMapping($tableDescriptor);
+    }
+
+    /**
+     * @param array $data
+     * @return DataObjectInterface
+     */
+    protected function getEntityFromRow(array $data) : DataObjectInterface
+    {
+        return new Entity(
+        <?php foreach ($fields as $field): ?>
+            <?php if ($field->isValueObject()): ?>
+            new <?= $field->getValueClassAlias() ?>($data['<?= $field->getColumn()->getColumnName() ?>'])<?= $this->_delimit($fields, ',') ?>
+            <?php else: ?>
+            $data['<?= $field->getColumn()->getColumnName() ?>']<?= $this->_delimit($fields, ',') ?>
+            <?php endif; ?>
+        <?php endforeach; ?>
+        );
     }
 
     /**
@@ -140,7 +157,7 @@ class <?= $managerName ?> extends AbstractEntityManager
      * @param bool $returnObject
      * @return Entity
      */
-    public function create(Entity $entity, bool $returnObject = true) : Entity
+    public function create(Entity $entity, bool $returnObject = true)
     {
         return $this->_create($entity, $returnObject);
     }
@@ -151,7 +168,7 @@ class <?= $managerName ?> extends AbstractEntityManager
      * @param bool $returnObject
      * @return Entity
      */
-    public function replace(int $primaryKey, Entity $entity, bool $returnObject = true) : Entity
+    public function replace(int $primaryKey, Entity $entity, bool $returnObject = true)
     {
         return $this->_replace($primaryKey, $entity, $returnObject);
     }
@@ -162,9 +179,19 @@ class <?= $managerName ?> extends AbstractEntityManager
      * @param bool $returnObject
      * @return Entity
      */
-    public function update(int $primaryKey, array $fieldValues, bool $returnObject = true) : Entity
+    public function update(int $primaryKey, array $fieldValues, bool $returnObject = true)
     {
         return $this->_update($primaryKey, $fieldValues, $returnObject);
+    }
+
+    /**
+     * @param Entity $entity
+     * @param bool $returnObject
+     * @return Entity
+     */
+    public function updateByEntity(Entity $entity, bool $returnObject = true)
+    {
+        return $this->_updateByEntity($entity, $returnObject);
     }
 
     /**
@@ -181,22 +208,5 @@ class <?= $managerName ?> extends AbstractEntityManager
      */
     public function getNewEntity() : Entity {
         return new Entity();
-    }
-
-    /**
-     * @param array $data
-     * @return DataObjectInterface
-     */
-    protected function _getEntityFromRow(array $data) : DataObjectInterface
-    {
-        return new Entity(
-        <?php foreach ($fields as $field): ?>
-            <?php if ($field->isValueObject()): ?>
-            new <?= $field->getValueClassAlias() ?>($data['<?= $field->getColumn()->getColumnName() ?>'])<?= $this->_delimit($fields, ',') ?>
-            <?php else: ?>
-            $data['<?= $field->getColumn()->getColumnName() ?>']<?= $this->_delimit($fields, ',') ?>
-            <?php endif; ?>
-        <?php endforeach; ?>
-        );
     }
 }
