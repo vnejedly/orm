@@ -20,6 +20,7 @@ use <?= $relationManagerGenericNamespace ?>\<?= $field->getFieldEntityName() ?> 
 <?php endforeach; ?>
 use <?= $persistenceManagerNamespace ?>\<?= $parentComponent->getComponentEntityName() ?> as <?= $parentComponent->getComponentEntityName() ?>PM;
 use <?= $relationEntityNamespace ?>\<?= $className ?> as Entity;
+use Hooloovoo\ORM\Relation\EQLQuery\QueryEngineConnector;
 use Hooloovoo\ORM\Relation\EQLQuery\EQLQueryInterface;
 use Hooloovoo\ORM\Relation\Manager\AbstractManager;
 use Hooloovoo\ORM\Relation\GroupedArray;
@@ -132,12 +133,11 @@ class <?= $className ?> extends AbstractManager
 
     /**
      * @param Query $query
-     * @param EQLQueryInterface|null $condition
      * @return Entity[]
      */
-    public function getByQueryEngine(Query $query, EQLQueryInterface $condition = null) : array
+    public function getByQueryEngine(Query $query) : array
     {
-        return $this->_getByQueryEngine($query, $condition);
+        return $this->_getByQueryEngine($query, new QueryEngineConnector($this->getEQLQuery('WHERE ')));
     }
 
     /**

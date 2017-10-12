@@ -193,22 +193,13 @@ abstract class AbstractManager implements ManagerInterface
 
     /**
      * @param Query $query
-     * @param EQLQueryInterface|null $condition
+     * @param QueryEngineConnector $queryEngineConnector
      * @return mixed[]
      */
-    protected function _getByQueryEngine(Query $query, EQLQueryInterface $condition = null) : array
+    protected function _getByQueryEngine(Query $query, QueryEngineConnector $queryEngineConnector) : array
     {
-        if (is_null($condition)) {
-            $condition = $this->getEQLQuery();
-            $appendWith = 'WHERE';
-        } else{
-            $appendWith = 'AND';
-        }
-
-        $eqlConnector = new QueryEngineConnector($condition, $appendWith);
-        $eqlConnector->applyQuery($query);
-
-        $primaryKeys = $this->_getPrimaryKeysByCondition($condition);
+        $queryEngineConnector->applyQuery($query);
+        $primaryKeys = $this->_getPrimaryKeysByCondition($queryEngineConnector->getEQLQuery());
 
         return $this->_getByPrimaryKeys($primaryKeys);
     }

@@ -272,24 +272,13 @@ abstract class AbstractEntityManager implements EntityManagerInterface
 
     /**
      * @param Query $query
-     * @param EQLQuery $condition
+     * @param QueryEngineConnector $queryEngineConnector
      * @return mixed[]
      */
-    protected function _getByQueryEngine(Query $query, EQLQuery $condition = null) : array
-    {        
-        if (is_null($condition)) {
-            $eqlQuery = $this->getEQLQuery('SELECT {*} FROM {@}');
-            $appendWith = 'WHERE';
-        } else{
-            $eqlQuery = $this->getEQLQuery('SELECT {*} FROM {@} {&precondition}');
-            $eqlQuery->addSubQuery('precondition', $condition);
-            $appendWith = 'AND';
-        }
-
-        $eqlConnector = new QueryEngineConnector($eqlQuery, $appendWith);
-        $eqlConnector->applyQuery($query);
-
-        return $this->_getObjects($eqlQuery);
+    protected function _getByQueryEngine(Query $query, QueryEngineConnector $queryEngineConnector) : array
+    {
+        $queryEngineConnector->applyQuery($query);
+        return $this->_getObjects($queryEngineConnector->getEQLQuery());
     }
 
     /**

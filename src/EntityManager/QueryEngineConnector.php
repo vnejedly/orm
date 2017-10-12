@@ -15,13 +15,19 @@ class QueryEngineConnector extends AbstractQueryEngineConnector
      * QueryEngineConnector constructor.
      *
      * @param EQLQuery $eqlQuery
-     * @param string $appendWith
      */
-    public function __construct(EQLQuery $eqlQuery, string $appendWith = 'WHERE')
+    public function __construct(EQLQuery $eqlQuery)
     {
         $this->eqlQuery = $eqlQuery;
-        $this->appendWith = $appendWith;
         $this->initDefaultFieldMapping();
+    }
+
+    /**
+     * @return EQLQuery
+     */
+    public function getEQLQuery() : EQLQuery
+    {
+        return $this->eqlQuery;
     }
 
     /**

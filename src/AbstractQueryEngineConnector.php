@@ -24,9 +24,6 @@ abstract class AbstractQueryEngineConnector implements ConnectorInterface
     /** @var QueryInterface */
     protected $eqlQuery;
 
-    /** @var string */
-    protected $appendWith = 'WHERE';
-
     /** @var string[] */
     protected $fieldMapping = [];
 
@@ -130,7 +127,7 @@ abstract class AbstractQueryEngineConnector implements ConnectorInterface
         }
 
         if (count($conditions) != 0) {
-            $this->eqlQuery->append($this->appendWith . ' ' . implode(' AND ', $conditions));
+            $this->eqlQuery->append(' ' . implode(' AND ', $conditions));
         }
     }
 

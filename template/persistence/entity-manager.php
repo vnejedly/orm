@@ -16,6 +16,7 @@ namespace <?= $entityManagerNamespace ?>;
 use Hooloovoo\Database\Database;
 use Hooloovoo\ORM\EntityManager\EQLQuery;
 use Hooloovoo\ORM\EntityManager\AbstractEntityManager;
+use Hooloovoo\ORM\EntityManager\QueryEngineConnector;
 use <?= $entityNamespace ?>\<?= $entityName ?> as Entity;
 use <?= $tableDescriptorNamespace ?>\<?= $tableDescriptorName ?> as Descriptor;
 use Hooloovoo\DataObjects\DataObjectInterface;
@@ -104,12 +105,13 @@ class <?= $managerName ?> extends AbstractEntityManager
 
     /**
      * @param Query $query
-     * @param EQLQuery $condition
      * @return Entity[]
      */
-    public function getByQueryEngine(Query $query, EQLQuery $condition = null) : array
+    public function getByQueryEngine(Query $query) : array
     {
-        return $this->_getByQueryEngine($query, $condition);
+        return $this->_getByQueryEngine($query, new QueryEngineConnector(
+            $this->getEQLQuery('SELECT {*} FROM {@} WHERE'))
+        );
     }
 
     /**
