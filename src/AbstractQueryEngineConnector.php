@@ -137,6 +137,8 @@ abstract class AbstractQueryEngineConnector implements ConnectorInterface
 
         if (count($conditions) != 0) {
             $this->eqlQuery->append(' ' . implode(' AND ', $conditions));
+        } else {
+            $this->eqlQuery->append(' 1');
         }
     }
 
