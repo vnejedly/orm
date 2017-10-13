@@ -273,12 +273,27 @@ abstract class AbstractEntityManager implements EntityManagerInterface
     /**
      * @param Query $query
      * @param QueryEngineConnector $queryEngineConnector
-     * @return mixed[]
+     * @return array
      */
     protected function _getByQueryEngine(Query $query, QueryEngineConnector $queryEngineConnector) : array
     {
         $queryEngineConnector->applyQuery($query);
+        $queryEngineConnector->applyPager($query);
+
         return $this->_getObjects($queryEngineConnector->getEQLQuery());
+    }
+
+    /**
+     * @param Query $query
+     * @param QueryEngineConnector $queryEngineConnector
+     * @return int
+     */
+    protected function _getCountByQueryEngine(Query $query, QueryEngineConnector $queryEngineConnector) : int
+    {
+        $queryEngineConnector->applyQuery($query);
+        $eqlQuery = $queryEngineConnector->getEQLQuery();
+
+        return (int) $this->getDatabase()->getConnectionSlave()->execute($eqlQuery)->fetchOne()['cnt'];
     }
 
     /**

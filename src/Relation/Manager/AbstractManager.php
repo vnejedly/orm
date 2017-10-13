@@ -194,11 +194,19 @@ abstract class AbstractManager implements ManagerInterface
     /**
      * @param Query $query
      * @param QueryEngineConnector $queryEngineConnector
-     * @return mixed[]
+     * @param int $totalCount
+     * @return array
      */
-    protected function _getByQueryEngine(Query $query, QueryEngineConnector $queryEngineConnector) : array
+    protected function _getByQueryEngine(
+        Query $query,
+        QueryEngineConnector $queryEngineConnector,
+        int &$totalCount = null
+    ) : array
     {
         $queryEngineConnector->applyQuery($query);
+        $totalCount = $this->_getCountByCondition($queryEngineConnector->getEQLQuery());
+
+        $queryEngineConnector->applyPager($query);
         $primaryKeys = $this->_getPrimaryKeysByCondition($queryEngineConnector->getEQLQuery());
 
         return $this->_getByPrimaryKeys($primaryKeys);
@@ -221,6 +229,22 @@ abstract class AbstractManager implements ManagerInterface
         $dataSetHelper = new DataSetHelper($resultSet);
 
         return $dataSetHelper->getColumnValues($this->getTableMapping()->getSimplePrimaryKey()->getColumnName());
+    }
+
+    /**
+     * @param EQLQueryInterface $condition
+     * @return int
+     */
+    protected function _getCountByCondition(EQLQueryInterface $condition) : int
+    {
+        $query = $this->getBasicCompositeSelect('count(DISTINCT {@.#}) AS cnt');
+        $query->append($condition->getQueryString());
+
+        foreach ($condition->getParams() as $name => $param) {
+            $query->addParam($name, $param->getValue(), $param->getType());
+        }
+
+        return (int) $this->_parentManager->getDatabase()->getConnectionSlave()->execute($query)->fetchOne()['cnt'];
     }
 
     /**

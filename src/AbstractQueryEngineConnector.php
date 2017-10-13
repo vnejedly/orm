@@ -93,7 +93,16 @@ abstract class AbstractQueryEngineConnector implements ConnectorInterface
     {
         $this->applyFilter($query->getFilter());
         $this->applySorter($query->getSorter());
-        $this->applyPager($query->getPager());
+    }
+
+    /**
+     * @param Query $query
+     */
+    public function applyPager(Query $query)
+    {
+        $this->eqlQuery->append('LIMIT :limit OFFSET :offset');
+        $this->eqlQuery->addParam('limit', $query->getPager()->getLimit(), Database::PARAM_INT);
+        $this->eqlQuery->addParam('offset', $query->getPager()->getOffset(), Database::PARAM_INT);
     }
 
     /**
@@ -146,16 +155,6 @@ abstract class AbstractQueryEngineConnector implements ConnectorInterface
         if (count($columnDirections) != 0) {
             $this->eqlQuery->append('ORDER BY ' . implode(', ', $columnDirections));
         }
-    }
-
-    /**
-     * @param Pager $pager
-     */
-    protected function applyPager(Pager $pager)
-    {
-        $this->eqlQuery->append('LIMIT :limit OFFSET :offset');
-        $this->eqlQuery->addParam('limit', $pager->getLimit(), Database::PARAM_INT);
-        $this->eqlQuery->addParam('offset', $pager->getOffset(), Database::PARAM_INT);
     }
 
     /**

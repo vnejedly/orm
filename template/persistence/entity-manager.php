@@ -105,10 +105,15 @@ class <?= $managerName ?> extends AbstractEntityManager
 
     /**
      * @param Query $query
+     * @param int $totalCount
      * @return Entity[]
      */
-    public function getByQueryEngine(Query $query) : array
+    public function getByQueryEngine(Query $query, int &$totalCount = null) : array
     {
+        $totalCount = $this->_getCountByQueryEngine($query, new QueryEngineConnector(
+            $this->getEQLQuery('SELECT count(*) AS cnt FROM {@} WHERE'))
+        );
+
         return $this->_getByQueryEngine($query, new QueryEngineConnector(
             $this->getEQLQuery('SELECT {*} FROM {@} WHERE'))
         );

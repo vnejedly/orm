@@ -269,12 +269,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/vnejedly/query-engine.git",
-                "reference": "e5ceb9850a47340fbc0c81adc72d9851819c3f15"
+                "reference": "12e1e2c2c502b58229575122021c30cc8c0b741d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/vnejedly/query-engine/zipball/e5ceb9850a47340fbc0c81adc72d9851819c3f15",
-                "reference": "e5ceb9850a47340fbc0c81adc72d9851819c3f15",
+                "url": "https://api.github.com/repos/vnejedly/query-engine/zipball/12e1e2c2c502b58229575122021c30cc8c0b741d",
+                "reference": "12e1e2c2c502b58229575122021c30cc8c0b741d",
                 "shasum": ""
             },
             "require": {
@@ -305,7 +305,7 @@
                 "sorter",
                 "url query"
             ],
-            "time": "2017-10-01T22:51:24+00:00"
+            "time": "2017-10-13T11:04:08+00:00"
         }
     ],
     "packages-dev": [],
