@@ -155,8 +155,12 @@ abstract class AbstractQueryEngineConnector implements ConnectorInterface
         }
 
         if (count($columnDirections) != 0) {
-            $this->eqlQuery->append('ORDER BY ' . implode(', ', $columnDirections));
+            $orderBy = implode(', ', $columnDirections);
+        } else {
+            $orderBy = $this->getDefaultOrder();
         }
+
+        $this->eqlQuery->append("ORDER BY $orderBy");
     }
 
     /**
@@ -202,6 +206,18 @@ abstract class AbstractQueryEngineConnector implements ConnectorInterface
     protected function sanitizeParamName(string $paramName) : string
     {
         return str_replace('.', '_', $paramName);
+    }
+
+    /**
+     * @return string
+     */
+    protected function getDefaultOrder()
+    {
+        $defaultQueryFieldName = array_keys($this->fieldMapping)[0];
+        $fieldName = $this->getFieldName($defaultQueryFieldName);
+        $direction = $this->sorterDirections[Sorter::DIRECTION_ASC];
+
+        return "$fieldName $direction";
     }
 
     /**
