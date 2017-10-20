@@ -25,7 +25,7 @@ class FieldInfo
     /**
      * @return bool
      */
-    public function isPersistence() : bool
+    public function isPersistence(): bool
     {
         return ($this->_joint->getChild() instanceof ComponentTable);
     }
@@ -33,7 +33,7 @@ class FieldInfo
     /**
      * @return bool
      */
-    public function isCollection() : bool
+    public function isCollection(): bool
     {
         return ($this->_joint->getCardinality() == JointInterface::CARDINALITY_MANY);
     }
@@ -41,7 +41,7 @@ class FieldInfo
     /**
      * @return string
      */
-    public function getFieldEntityName() : string
+    public function getFieldEntityName(): string
     {
         return $this->_joint->getChild()->getComponentEntityName();
     }
@@ -49,7 +49,7 @@ class FieldInfo
     /**
      * @return string
      */
-    public function getFieldTableName() : string
+    public function getFieldTableName(): string
     {
         return $this->_joint->getChild()->getComponentTableMapping()->getName();
     }
@@ -57,7 +57,7 @@ class FieldInfo
     /**
      * @return string
      */
-    public function getFieldEntityManagerAlias() : string
+    public function getFieldEntityManagerAlias(): string
     {
         if ($this->isPersistence()) {
             $suffix = 'PM';
@@ -71,7 +71,7 @@ class FieldInfo
     /**
      * @return string
      */
-    public function getFieldEntityManagerVariableName() : string
+    public function getFieldEntityManagerVariableName(): string
     {
         return lcfirst($this->getFieldEntityManagerAlias());
     }
@@ -79,7 +79,7 @@ class FieldInfo
     /**
      * @return string
      */
-    public function getFieldName() : string
+    public function getFieldName(): string
     {
         return $this->_joint->getChild()->getComponentFieldName();
     }
@@ -87,7 +87,7 @@ class FieldInfo
     /**
      * @return string
      */
-    public function getDeclaration() : string
+    public function getDeclaration(): string
     {
         if ($this->_joint->getCardinality() == JointInterface::CARDINALITY_ONE) {
             $hint = $this->_joint->getChild()->getComponentEntityName();
@@ -106,7 +106,7 @@ class FieldInfo
     /**
      * @return string
      */
-    public function getAnnotation() : string
+    public function getAnnotation(): string
     {
         $hint = $this->_joint->getChild()->getComponentEntityName();
 
@@ -120,7 +120,7 @@ class FieldInfo
     /**
      * @return string
      */
-    public function getFieldClass() : string
+    public function getFieldClass(): string
     {
         if ($this->_joint->getCardinality() == JointInterface::CARDINALITY_ONE) {
             return 'FieldDataObject';
@@ -132,8 +132,16 @@ class FieldInfo
     /**
      * @return string[]
      */
-    public function getJoinClauses() : array
+    public function getJoinClauses(): array
     {
         return $this->_joint->getJoinClauses();
+    }
+
+    /**
+     * @return bool
+     */
+    public function isCardinalityOne() : bool
+    {
+        return $this->_joint->getCardinality() == JointInterface::CARDINALITY_ONE;
     }
 }

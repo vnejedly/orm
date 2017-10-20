@@ -96,6 +96,46 @@ abstract class AbstractQueryEngineConnector implements ConnectorInterface
     }
 
     /**
+     * @param Filter $filter
+     * @throws FieldNameException
+     */
+    public function applyFilter(Filter $filter)
+    {
+        $conditions = [];
+
+        foreach ($filter->getParams() as $param) {
+            $conditions[] = $this->handleFilterParam($param);
+        }
+
+        if (count($conditions) != 0) {
+            $this->eqlQuery->append(' ' . implode(' AND ', $conditions));
+        } else {
+            $this->eqlQuery->append(' 1');
+        }
+    }
+
+    /**
+     * @param Sorter $sorter
+     * @throws FieldNameException
+     */
+    public function applySorter(Sorter $sorter)
+    {
+        $columnDirections = [];
+
+        foreach ($sorter->getParams() as $param) {
+            $columnDirections[] = $this->handleSorterParam($param);
+        }
+
+        if (count($columnDirections) != 0) {
+            $orderBy = implode(', ', $columnDirections);
+        } else {
+            $orderBy = $this->getDefaultOrder();
+        }
+
+        $this->eqlQuery->append("ORDER BY $orderBy");
+    }
+
+    /**
      * @param Query $query
      */
     public function applyPager(Query $query)
@@ -122,46 +162,6 @@ abstract class AbstractQueryEngineConnector implements ConnectorInterface
      * Initializes default field mapping
      */
     abstract protected function initDefaultFieldMapping();
-
-    /**
-     * @param Filter $filter
-     * @throws FieldNameException
-     */
-    protected function applyFilter(Filter $filter)
-    {
-        $conditions = [];
-
-        foreach ($filter->getParams() as $param) {
-            $conditions[] = $this->handleFilterParam($param);
-        }
-
-        if (count($conditions) != 0) {
-            $this->eqlQuery->append(' ' . implode(' AND ', $conditions));
-        } else {
-            $this->eqlQuery->append(' 1');
-        }
-    }
-
-    /**
-     * @param Sorter $sorter
-     * @throws FieldNameException
-     */
-    protected function applySorter(Sorter $sorter)
-    {
-        $columnDirections = [];
-
-        foreach ($sorter->getParams() as $param) {
-            $columnDirections[] = $this->handleSorterParam($param);
-        }
-
-        if (count($columnDirections) != 0) {
-            $orderBy = implode(', ', $columnDirections);
-        } else {
-            $orderBy = $this->getDefaultOrder();
-        }
-
-        $this->eqlQuery->append("ORDER BY $orderBy");
-    }
 
     /**
      * @param FilterParam $param

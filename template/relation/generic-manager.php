@@ -82,6 +82,22 @@ class <?= $className ?> extends AbstractManager
     }
 
     /**
+     * @param string $selection
+     * @return EQLQueryInterface
+     */
+    protected function getXToOneCompositeSelect(string $selection): EQLQueryInterface
+    {
+        return $this->getEQLQuery("
+            SELECT $selection FROM {<?= $parentComponent->getComponentTableMapping()->getEntityName() ?>}
+            <?php foreach ($fields as $field): ?>
+            <?php if ($field->isCardinalityOne()) foreach ($field->getJoinClauses() as $joinClause): ?>
+            <?= $joinClause ?>
+            <?php endforeach; ?>
+            <?php endforeach; ?>
+        ");
+    }
+
+    /**
      * @param GroupedArray $groupedArray
      * @return Entity
      */

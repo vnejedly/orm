@@ -14,6 +14,7 @@ use Hooloovoo\ORM\Relation\EQLQuery\QueryEngineConnector;
 use Hooloovoo\ORM\Relation\GroupedArray;
 use Hooloovoo\ORM\Utils\DataSetHelper;
 use Hooloovoo\QueryEngine\Query\Query;
+use Hooloovoo\QueryEngine\Sorter;
 
 /**
  * Class AbstractManager
@@ -115,7 +116,7 @@ abstract class AbstractManager implements ManagerInterface
      */
     protected function _getByPrimaryKey(int $primaryKey)
     {
-        $collection = $this->getByPrimaryKeys([$primaryKey]);
+        $collection = $this->_getByPrimaryKeys([$primaryKey]);
 
         if (count($collection) < 1) {
             throw new EntityNotFoundException($this->_parentManager->getTableMapping()->getEntityName());
@@ -137,7 +138,27 @@ abstract class AbstractManager implements ManagerInterface
         $condition = $this->getEQLQuery('WHERE {@.#} IN (:primaryKeys)');
         $condition->addMultiParam('primaryKeys', $primaryKeys, Database::PARAM_INT);
 
-        return $this->getByCondition($condition);
+        return $this->_getByCondition($condition);
+    }
+
+    /**
+     * @param array $primaryKeys
+     * @param Sorter $sorter
+     * @return mixed
+     */
+    protected function _getByPrimaryKeysOrdered(array $primaryKeys, Sorter $sorter) : array
+    {
+        if (count($primaryKeys) == 0) {
+            return [];
+        }
+
+        $condition = $this->getEQLQuery('WHERE {@.#} IN (:primaryKeys)');
+        $condition->addMultiParam('primaryKeys', $primaryKeys, Database::PARAM_INT);
+
+        $queryEngineConnector = new QueryEngineConnector($condition);
+        $queryEngineConnector->applySorter($sorter);
+
+        return $this->_getByCondition($condition);
     }
 
     /**
@@ -146,7 +167,7 @@ abstract class AbstractManager implements ManagerInterface
      */
     protected function _getSingleByCondition(EQLQueryInterface $condition)
     {
-        $collection = $this->getByCondition($condition);
+        $collection = $this->_getByCondition($condition);
 
         if (count($collection) < 1) {
             throw new EntityNotFoundException($this->_parentManager->getTableMapping()->getEntityName());
@@ -209,7 +230,7 @@ abstract class AbstractManager implements ManagerInterface
         $queryEngineConnector->applyPager($query);
         $primaryKeys = $this->_getPrimaryKeysByCondition($queryEngineConnector->getEQLQuery());
 
-        return $this->_getByPrimaryKeys($primaryKeys);
+        return $this->_getByPrimaryKeysOrdered($primaryKeys, $query->getSorter());
     }
 
     /**
@@ -218,7 +239,7 @@ abstract class AbstractManager implements ManagerInterface
      */
     protected function _getPrimaryKeysByCondition(EQLQueryInterface $condition) : array
     {
-        $query = $this->getBasicCompositeSelect('DISTINCT {@.#}');
+        $query = $this->getXToOneCompositeSelect('{@.#}');
         $query->append($condition->getQueryString());
 
         foreach ($condition->getParams() as $name => $param) {
@@ -258,6 +279,12 @@ abstract class AbstractManager implements ManagerInterface
      * @return EQLQueryInterface
      */
     abstract protected function getBasicCompositeSelect(string $selection) : EQLQueryInterface;
+
+    /**
+     * @param string $selection
+     * @return EQLQueryInterface
+     */
+    abstract protected function getXToOneCompositeSelect(string $selection): EQLQueryInterface;
 
     /**
      * @param Database $database
