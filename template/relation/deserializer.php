@@ -56,6 +56,10 @@ class <?= $className ?> extends AbstractDeserializer
      */
     public function deserialize(array $data)
     {
+        if (is_null($data)) {
+            return null;
+        }
+
         return new Entity(
             $this->deserializeParent($data),
             <?php foreach ($fields as $field): ?>

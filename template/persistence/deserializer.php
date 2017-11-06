@@ -31,8 +31,12 @@ class <?= $entityName ?> implements DeserializerInterface
      * @param array $data
      * @return Entity
      */
-    public function deserialize(array $data)
+    public function deserialize(array $data = null)
     {
+        if (is_null($data)) {
+            return null;
+        }
+
         return new Entity(
         <?php foreach ($fields as $field): ?>
             <?php if ($field->isValueObject()): ?>
