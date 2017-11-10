@@ -4,7 +4,7 @@ namespace Hooloovoo\ORM\Exception;
 /**
  * Class EntityNotFoundException
  */
-class EntityNotFoundException extends RuntimeException
+class EntityNotFoundException extends RuntimeException implements HttpExceptionInterface
 {
     const HTTP_CODE = 404;
 
@@ -31,5 +31,13 @@ class EntityNotFoundException extends RuntimeException
     public function getEntityName() : string
     {
         return $this->_entityName;
+    }
+
+    /**
+     * @return int
+     */
+    public function getStatusCode(): int
+    {
+        return self::HTTP_CODE;
     }
 }
