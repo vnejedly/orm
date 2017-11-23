@@ -101,16 +101,25 @@ abstract class AbstractQueryEngineConnector implements ConnectorInterface
      */
     public function applyFilter(Filter $filter)
     {
-        $conditions = [];
-
+        $orConditionGroups = [];
         foreach ($filter->getParams() as $param) {
-            $conditions[] = $this->handleFilterParam($param);
+            $paramName = $param->getName();
+            if (!array_key_exists($paramName, $orConditionGroups)) {
+                $orConditionGroups[$paramName] = [];
+            }
+
+            $orConditionGroups[$paramName][] = $this->handleFilterParam($param);
         }
 
-        if (count($conditions) != 0) {
-            $this->eqlQuery->append(' ' . implode(' AND ', $conditions));
+        $andConditions = [];
+        foreach ($orConditionGroups as $conditionGroup) {
+            $andConditions[] = '(' . implode(' OR ', $conditionGroup) . ')';
+        }
+
+        if (count($andConditions) != 0) {
+            $this->eqlQuery->append(implode(' AND ', $andConditions));
         } else {
-            $this->eqlQuery->append(' 1');
+            $this->eqlQuery->append('1');
         }
     }
 
@@ -205,7 +214,7 @@ abstract class AbstractQueryEngineConnector implements ConnectorInterface
      */
     protected function sanitizeParamName(string $paramName) : string
     {
-        return str_replace('.', '_', $paramName);
+        return str_replace('.', '_', $paramName) . '_' . uniqid();
     }
 
     /**

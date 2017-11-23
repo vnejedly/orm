@@ -154,7 +154,7 @@ class <?= $className ?> extends AbstractManager
      */
     public function getByQueryEngine(Query $query, int &$totalCount = null) : array
     {
-        return $this->_getByQueryEngine($query, new QueryEngineConnector($this->getEQLQuery('WHERE ')), $totalCount);
+        return $this->_getByQueryEngine($query, new QueryEngineConnector($this->getEQLQuery('WHERE')), $totalCount);
     }
 
     /**
