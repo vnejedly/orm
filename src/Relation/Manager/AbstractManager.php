@@ -258,7 +258,7 @@ abstract class AbstractManager implements ManagerInterface
      */
     protected function _getCountByCondition(EQLQueryInterface $condition) : int
     {
-        $query = $this->getXToOneCompositeSelect('count({@.#}) AS cnt');
+        $query = $this->getXToOneCompositeSelect('count(DISTINCT {@.#}) AS cnt');
         $query->append($condition->getQueryString());
 
         foreach ($condition->getParams() as $name => $param) {

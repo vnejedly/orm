@@ -15,11 +15,15 @@ class QueryEngineConnector extends AbstractQueryEngineConnector
      * QueryEngineConnector constructor.
      *
      * @param EQLQueryInterface $eqlQuery
+     * @param bool $defaultMapping
      */
-    public function __construct(EQLQueryInterface $eqlQuery)
+    public function __construct(EQLQueryInterface $eqlQuery, $defaultMapping = true)
     {
         $this->eqlQuery = $eqlQuery;
-        $this->initDefaultFieldMapping();
+
+        if ($defaultMapping) {
+            $this->initDefaultFieldMapping();
+        }
     }
 
     /**
