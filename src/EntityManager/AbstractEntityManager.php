@@ -9,6 +9,7 @@ use Hooloovoo\ORM\Cache\CacheInterface;
 use Hooloovoo\ORM\Exception\EntityNotFoundException;
 use Hooloovoo\ORM\Exception\LogicException;
 use Hooloovoo\ORM\Exception\NonOriginalEntityException;
+use Hooloovoo\ORM\Utils\ArrayPager;
 use Hooloovoo\QueryEngine\Query\Query;
 
 /**
@@ -16,6 +17,8 @@ use Hooloovoo\QueryEngine\Query\Query;
  */
 abstract class AbstractEntityManager implements EntityManagerInterface
 {
+    const SQL_MAX_PLACEHOLDERS = 1000;
+
     /** @var Database */
     protected $_database;
 
@@ -225,24 +228,41 @@ abstract class AbstractEntityManager implements EntityManagerInterface
      */
     protected function _getByPrimaryKeys(array $primaryKeys) : array
     {
-        if (count($primaryKeys) == 0) {
+        $count = count($primaryKeys);
+
+        if (0 == $count) {
             return [];
         }
 
-        $query = $this->getEQLQuery("
-            SELECT {*} FROM {@} 
-            WHERE `{$this->_tableMapping->getSimplePrimaryKey()->getColumnName()}` IN (:primaryKeys)
-        ");
+        $offset = 0;
+        $limit = self::SQL_MAX_PLACEHOLDERS;
+        $collection = [];
 
-        $query->addMultiParam('primaryKeys', $primaryKeys, Database::PARAM_INT);
-        $dataObjects = $this->_getObjects($query);
+        while ($offset < $count) {
+            $query = $this->getEQLQuery("
+                SELECT {*} FROM {@} 
+                WHERE `{$this->_tableMapping->getSimplePrimaryKey()->getColumnName()}` IN (:primaryKeys)
+            ");
 
-        if (count($dataObjects) != count($primaryKeys)) {
-            $missingKeys = implode(', ', array_diff($primaryKeys, array_keys($dataObjects)));
+            $query->addMultiParam(
+                'primaryKeys',
+                array_slice($primaryKeys, $offset, $limit),
+                Database::PARAM_INT
+            );
+
+            foreach ($this->_getObjects($query) as $key => $value) {
+                $collection[$key] = $value;
+            }
+
+            $offset = $offset + $limit;
+        }
+
+        if (count($collection) != count($primaryKeys)) {
+            $missingKeys = implode(', ', array_diff($primaryKeys, array_keys($collection)));
             throw new EntityNotFoundException("Entities not found ($missingKeys)");
         }
 
-        return $dataObjects;
+        return $collection;
     }
 
     /**

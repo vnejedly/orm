@@ -12,6 +12,7 @@ use Hooloovoo\ORM\Relation\EQLQuery\EQLQuery;
 use Hooloovoo\ORM\Relation\EQLQuery\EQLQueryInterface;
 use Hooloovoo\ORM\Relation\EQLQuery\QueryEngineConnector;
 use Hooloovoo\ORM\Relation\GroupedArray;
+use Hooloovoo\ORM\Utils\ArrayPager;
 use Hooloovoo\ORM\Utils\DataSetHelper;
 use Hooloovoo\QueryEngine\Query\Query;
 use Hooloovoo\QueryEngine\Sorter;
@@ -21,6 +22,8 @@ use Hooloovoo\QueryEngine\Sorter;
  */
 abstract class AbstractManager implements ManagerInterface
 {
+    const SQL_MAX_PLACEHOLDERS = 1000;
+
     /** @var Database */
     protected $_database;
 
@@ -131,34 +134,32 @@ abstract class AbstractManager implements ManagerInterface
      */
     protected function _getByPrimaryKeys(array $primaryKeys) : array
     {
-        if (count($primaryKeys) == 0) {
+        $count = count($primaryKeys);
+
+        if (0 == $count) {
             return [];
         }
 
-        $condition = $this->getEQLQuery('WHERE {@.#} IN (:primaryKeys)');
-        $condition->addMultiParam('primaryKeys', $primaryKeys, Database::PARAM_INT);
+        $offset = 0;
+        $limit = self::SQL_MAX_PLACEHOLDERS;
+        $collection = [];
 
-        return $this->_getByCondition($condition);
-    }
+        while ($offset < $count) {
+            $primaryKeysSubSet = array_slice($primaryKeys, $offset, $limit);
 
-    /**
-     * @param array $primaryKeys
-     * @param Sorter $sorter
-     * @return mixed
-     */
-    protected function _getByPrimaryKeysOrdered(array $primaryKeys, Sorter $sorter) : array
-    {
-        if (count($primaryKeys) == 0) {
-            return [];
+            $condition = $this->getEQLQuery('WHERE {@.#} IN (:primaryKeys)');
+            $condition->addMultiParam('primaryKeys', $primaryKeysSubSet, Database::PARAM_INT);
+
+            $subCollectionUnsorted = $this->_getByCondition($condition);
+
+            foreach ($primaryKeysSubSet as $primaryKey) {
+                $collection[$primaryKey] = $subCollectionUnsorted[$primaryKey];
+            }
+
+            $offset = $offset + $limit;
         }
 
-        $condition = $this->getEQLQuery('WHERE {@.#} IN (:primaryKeys)');
-        $condition->addMultiParam('primaryKeys', $primaryKeys, Database::PARAM_INT);
-
-        $queryEngineConnector = new QueryEngineConnector($condition);
-        $queryEngineConnector->applySorter($sorter);
-
-        return $this->_getByCondition($condition);
+        return $collection;
     }
 
     /**
@@ -205,7 +206,7 @@ abstract class AbstractManager implements ManagerInterface
             $prefixedPKName = "$tableName.$primaryKeyName";
 
             $collections[$tableName] = $componentManager->getByPrimaryKeys(
-                $dataSetHelper->getColumnValuesUnique($prefixedPKName)
+                $dataSetHelper->getColumnValues($prefixedPKName, true, true)
             );
         }
 
@@ -230,7 +231,7 @@ abstract class AbstractManager implements ManagerInterface
         $queryEngineConnector->applyPager($query);
         $primaryKeys = $this->_getPrimaryKeysByCondition($queryEngineConnector->getEQLQuery());
 
-        return $this->_getByPrimaryKeysOrdered($primaryKeys, $query->getSorter());
+        return $this->_getByPrimaryKeys($primaryKeys);
     }
 
     /**

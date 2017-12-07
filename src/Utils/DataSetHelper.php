@@ -20,24 +20,23 @@ class DataSetHelper
 
     /**
      * @param string $columnName
+     * @param bool $unique
+     * @param bool $notNull
      * @return mixed[]
      */
-    public function getColumnValues(string $columnName) : array
+    public function getColumnValues(string $columnName, bool $unique = false, bool $notNull = false) : array
     {
         $columnValues = [];
         foreach ($this->data as $row) {
-            $columnValues[] = $row[$columnName];
+            if (!$notNull || !is_null($row[$columnName])) {
+                $columnValues[] = $row[$columnName];
+            }
+        }
+
+        if ($unique) {
+            return array_unique($columnValues);
         }
 
         return $columnValues;
-    }
-
-    /**
-     * @param string $columnName
-     * @return array
-     */
-    public function getColumnValuesUnique(string $columnName) : array
-    {
-        return array_unique($this->getColumnValues($columnName));
     }
 }
