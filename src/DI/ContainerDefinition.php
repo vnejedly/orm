@@ -1,6 +1,9 @@
 <?php
 namespace Hooloovoo\ORM\DI;
 
+use Hooloovoo\DI\ObjectHolder\Singleton;
+use Hooloovoo\ORM\EventDispatcher\ConnectorInterface as DispatcherConnectorInterface;
+use Hooloovoo\ORM\EventDispatcher\NullConnector as NullDispatcherConnector;
 use Hooloovoo\Database\DI\ContainerDefinition as DatabaseDefinition;
 use Hooloovoo\DI\Container\ContainerInterface;
 use Hooloovoo\DI\Definition\AbstractDefinitionClass;
@@ -53,5 +56,9 @@ class ContainerDefinition extends AbstractDefinitionClass
             $this->user,
             $this->password
         ));
+
+        $container->add(DispatcherConnectorInterface::class, new Singleton(function () use ($container) {
+            return $container->get(NullDispatcherConnector::class);
+        }));
     }
 }

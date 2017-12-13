@@ -2,14 +2,13 @@
 namespace Hooloovoo\ORM\EntityManager;
 
 use Hooloovoo\Database\Database;
+use Hooloovoo\ORM\EventDispatcher\ConnectorInterface as DispatcherConnector;
 use Hooloovoo\DatabaseMapping\Descriptor\Table\TableInterface as TableDescriptor;
 use Hooloovoo\DatabaseMapping\Table as TableMapping;
 use Hooloovoo\DataObjects\DataObjectInterface;
-use Hooloovoo\ORM\Cache\CacheInterface;
 use Hooloovoo\ORM\Exception\EntityNotFoundException;
 use Hooloovoo\ORM\Exception\LogicException;
 use Hooloovoo\ORM\Exception\NonOriginalEntityException;
-use Hooloovoo\ORM\Utils\ArrayPager;
 use Hooloovoo\QueryEngine\Query\Query;
 
 /**
@@ -25,11 +24,8 @@ abstract class AbstractEntityManager implements EntityManagerInterface
     /** @var TableMapping */
     protected $_tableMapping;
 
-    /** @var CacheInterface */
-    protected $_cache;
-
-    /** @var bool */
-    protected $_cachingEngineOn = false;
+    /** @var DispatcherConnector */
+    protected $_dispatcherConnector;
 
     /**
      * @param string $conditionString
@@ -71,14 +67,17 @@ abstract class AbstractEntityManager implements EntityManagerInterface
      */
     public function delete(int $primaryKey)
     {
-        $this->_getByPrimaryKey($primaryKey); // try to load the object in order to throw an exception if not exists
+        $entity = $this->_getByPrimaryKey($primaryKey);
+        $this->_dispatcherConnector->beforeDelete($this, $entity);
 
         $query = $this->_database->createQuery("
             DELETE FROM {$this->_tableMapping->getName()} 
             WHERE {$this->_tableMapping->getSimplePrimaryKey()->getColumnName()} = :primaryKey
         ");
+
         $query->addParam('primaryKey', $primaryKey, Database::PARAM_INT);
         $this->_database->getConnectionMaster()->execute($query);
+        $this->_dispatcherConnector->afterDelete($this, $entity);
     }
 
     /**
@@ -88,6 +87,8 @@ abstract class AbstractEntityManager implements EntityManagerInterface
      */
     protected function _create(DataObjectInterface $dataObject, bool $returnObject = true)
     {
+        $this->_dispatcherConnector->beforeCreate($this, $dataObject);
+
         $columnNames = [];
         $placeHolders = [];
         $data = []; /** @var DOFieldDBTypeMapping[] $data */
@@ -120,15 +121,16 @@ abstract class AbstractEntityManager implements EntityManagerInterface
 
         $this->_database->getConnectionMaster()->execute($query);
 
+        $primaryKeyColumn = $this->_tableMapping->getSimplePrimaryKey();
+        if ($primaryKeyColumn->getIsAutoIncrement()) {
+            $primaryKey = $this->_database->getConnectionMaster()->getLastInsertedId();
+        } else {
+            $primaryKey = $dataObject->getField($primaryKeyColumn->getEntityFieldName())->getValue();
+        }
+
+        $this->_dispatcherConnector->afterCreate($this, $dataObject, $primaryKey);
+
         if ($returnObject) {
-            $primaryKeyColumn = $this->_tableMapping->getSimplePrimaryKey();
-
-            if ($primaryKeyColumn->getIsAutoIncrement()) {
-                $primaryKey = $this->_database->getConnectionMaster()->getLastInsertedId();
-            } else {
-                $primaryKey = $dataObject->getField($primaryKeyColumn->getEntityFieldName())->getValue();
-            }
-
             return $this->_getByPrimaryKey($primaryKey);
         }
     }
@@ -172,6 +174,8 @@ abstract class AbstractEntityManager implements EntityManagerInterface
      */
     protected function _updateByEntity(DataObjectInterface $entity, bool $returnObject = true)
     {
+        $this->_dispatcherConnector->beforeUpdate($this, $entity);
+
         $parts = [];
         $data = []; /** @var DOFieldDBTypeMapping[] $data */
         $primaryKeyName = $this->_tableMapping->getSimplePrimaryKey()->getColumnName();
@@ -207,6 +211,8 @@ abstract class AbstractEntityManager implements EntityManagerInterface
 
             $this->_database->getConnectionMaster()->execute($query);
         }
+
+        $this->_dispatcherConnector->afterUpdate($this, $entity);
 
         if ($returnObject) {
             return $this->_getByPrimaryKey($primaryKey);
@@ -440,6 +446,14 @@ abstract class AbstractEntityManager implements EntityManagerInterface
     protected function setDatabase(Database $database)
     {
         $this->_database = $database;
+    }
+
+    /**
+     * @param DispatcherConnector $dispatcherConnector
+     */
+    protected function setDispatcherConnector(DispatcherConnector $dispatcherConnector)
+    {
+        $this->_dispatcherConnector = $dispatcherConnector;
     }
 
     /**

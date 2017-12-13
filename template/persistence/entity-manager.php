@@ -19,6 +19,7 @@ use Hooloovoo\ORM\EntityManager\AbstractEntityManager;
 use Hooloovoo\ORM\EntityManager\QueryEngineConnector;
 use <?= $entityNamespace ?>\<?= $entityName ?> as Entity;
 use <?= $tableDescriptorNamespace ?>\<?= $tableDescriptorName ?> as Descriptor;
+use Hooloovoo\ORM\EventDispatcher\ConnectorInterface as DispatcherConnector;
 use Hooloovoo\DataObjects\DataObjectInterface;
 use Hooloovoo\QueryEngine\Query\Query;
 <?php foreach ($imports as $import): ?>
@@ -40,13 +41,16 @@ class <?= $managerName ?> extends AbstractEntityManager
      * <?= $managerName ?> constructor.
      *
      * @param Database $database
+     * @param DispatcherConnector $dispatcherConnector
      * @param Descriptor $tableDescriptor
      */
     public function __construct(
         Database $database,
+        DispatcherConnector $dispatcherConnector,
         Descriptor $tableDescriptor
     ) {
         $this->setDatabase($database);
+        $this->setDispatcherConnector($dispatcherConnector);
         $this->resolveMapping($tableDescriptor);
     }
 
