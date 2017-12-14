@@ -11,6 +11,13 @@ use Hooloovoo\ORM\ComponentManagerInterface;
  */
 interface EntityManagerInterface extends ComponentManagerInterface
 {
+    const EVENT_PREFIX_CREATE_BEFORE = 'persistence.create.before';
+    const EVENT_PREFIX_CREATE_AFTER = 'persistence.create.after';
+    const EVENT_PREFIX_UPDATE_BEFORE = 'persistence.update.before';
+    const EVENT_PREFIX_UPDATE_AFTER = 'persistence.update.after';
+    const EVENT_PREFIX_DELETE_BEFORE = 'persistence.delete.before';
+    const EVENT_PREFIX_DELETE_AFTER = 'persistence.delete.after';
+
     /**
      * @param array $resultSet
      * @return DataObjectInterface[]

@@ -68,7 +68,7 @@ abstract class AbstractEntityManager implements EntityManagerInterface
     public function delete(int $primaryKey)
     {
         $entity = $this->_getByPrimaryKey($primaryKey);
-        $this->_dispatcherConnector->beforeDelete($this, $entity);
+        $this->_dispatcherConnector->beforeDelete($this->getEventName(self::EVENT_PREFIX_DELETE_BEFORE), $this, $entity);
 
         $query = $this->_database->createQuery("
             DELETE FROM {$this->_tableMapping->getName()} 
@@ -77,7 +77,7 @@ abstract class AbstractEntityManager implements EntityManagerInterface
 
         $query->addParam('primaryKey', $primaryKey, Database::PARAM_INT);
         $this->_database->getConnectionMaster()->execute($query);
-        $this->_dispatcherConnector->afterDelete($this, $entity);
+        $this->_dispatcherConnector->afterDelete($this->getEventName(self::EVENT_PREFIX_DELETE_AFTER), $this, $entity);
     }
 
     /**
@@ -87,7 +87,7 @@ abstract class AbstractEntityManager implements EntityManagerInterface
      */
     protected function _create(DataObjectInterface $dataObject, bool $returnObject = true)
     {
-        $this->_dispatcherConnector->beforeCreate($this, $dataObject);
+        $this->_dispatcherConnector->beforeCreate($this->getEventName(self::EVENT_PREFIX_CREATE_BEFORE), $this, $dataObject);
 
         $columnNames = [];
         $placeHolders = [];
@@ -128,7 +128,7 @@ abstract class AbstractEntityManager implements EntityManagerInterface
             $primaryKey = $dataObject->getField($primaryKeyColumn->getEntityFieldName())->getValue();
         }
 
-        $this->_dispatcherConnector->afterCreate($this, $dataObject, $primaryKey);
+        $this->_dispatcherConnector->afterCreate($this->getEventName(self::EVENT_PREFIX_CREATE_AFTER), $this, $dataObject, $primaryKey);
 
         if ($returnObject) {
             return $this->_getByPrimaryKey($primaryKey);
@@ -174,7 +174,7 @@ abstract class AbstractEntityManager implements EntityManagerInterface
      */
     protected function _updateByEntity(DataObjectInterface $entity, bool $returnObject = true)
     {
-        $this->_dispatcherConnector->beforeUpdate($this, $entity);
+        $this->_dispatcherConnector->beforeUpdate($this->getEventName(self::EVENT_PREFIX_UPDATE_BEFORE), $this, $entity);
 
         $parts = [];
         $data = []; /** @var DOFieldDBTypeMapping[] $data */
@@ -212,7 +212,7 @@ abstract class AbstractEntityManager implements EntityManagerInterface
             $this->_database->getConnectionMaster()->execute($query);
         }
 
-        $this->_dispatcherConnector->afterUpdate($this, $entity);
+        $this->_dispatcherConnector->afterUpdate($this->getEventName(self::EVENT_PREFIX_UPDATE_AFTER), $this, $entity);
 
         if ($returnObject) {
             return $this->_getByPrimaryKey($primaryKey);
@@ -438,6 +438,15 @@ abstract class AbstractEntityManager implements EntityManagerInterface
         }
 
         return $dataObjects;
+    }
+
+    /**
+     * @param string $eventPrefix
+     * @return string
+     */
+    protected function getEventName(string $eventPrefix) : string
+    {
+        return $eventPrefix . '.' . strtolower($this->_tableMapping->getEntityName());
     }
 
     /**

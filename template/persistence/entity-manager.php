@@ -37,6 +37,13 @@ use <?= $import ?>;
  */
 class <?= $managerName ?> extends AbstractEntityManager
 {
+    const EVENT_CREATE_BEFORE = self::EVENT_PREFIX_CREATE_BEFORE . '.<?= strtolower($managerName) ?>';
+    const EVENT_CREATE_AFTER = self::EVENT_PREFIX_CREATE_AFTER . '.<?= strtolower($managerName) ?>';
+    const EVENT_UPDATE_BEFORE = self::EVENT_PREFIX_UPDATE_BEFORE . '.<?= strtolower($managerName) ?>';
+    const EVENT_UPDATE_AFTER = self::EVENT_PREFIX_UPDATE_AFTER . '.<?= strtolower($managerName) ?>';
+    const EVENT_DELETE_BEFORE = self::EVENT_PREFIX_DELETE_BEFORE . '.<?= strtolower($managerName) ?>';
+    const EVENT_DELETE_AFTER = self::EVENT_PREFIX_DELETE_AFTER . '.<?= strtolower($managerName) ?>';
+
     /**
      * <?= $managerName ?> constructor.
      *
