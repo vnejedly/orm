@@ -10,7 +10,7 @@
  */ ?>
 namespace <?= $deserializerNamespace ?>;
 
-use Hooloovoo\ORM\DeserializerInterface;
+use <?= $projectNamespace ?>\DeserializerInterface;
 use <?= $entityNamespace ?>\<?= $entityName ?> as Entity;
 <?php foreach ($imports as $import): ?>
 use <?= $import ?>;

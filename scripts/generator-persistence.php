@@ -18,6 +18,7 @@ $container->addDefinitionClass(new \Hooloovoo\ORM\Generator\Persistence\Containe
 $entityDir = $projectRoot . '/src/' . $persistence['directory'] . '/Entity';
 $descriptorDir = $projectRoot . '/src/' . $persistence['directory'] . '/Descriptor';
 $managerDir = $projectRoot . '/src/' . $persistence['directory'] . '/Manager';
+$deserializerDir = $projectRoot . '/src/' . $persistence['directory'] . '/Deserializer';
 $exportEntityDir = $projectRoot . '/export/src/' . $persistence['directory'] . '/Entity';
 $exportDeserializerDir = $projectRoot . '/export/src/' . $persistence['directory'] . '/Deserializer';
 $exportConfigDir = $projectRoot . '/export/config';
@@ -30,6 +31,7 @@ $managerNamespace = $persistence['namespace'] . '\\Manager';
 mkdir($entityDir);
 mkdir($descriptorDir);
 mkdir($managerDir);
+mkdir($deserializerDir);
 mkdir($exportEntityDir);
 mkdir($exportDeserializerDir);
 
@@ -61,7 +63,8 @@ $entityManagerGenerator->setExternalVariable('entityManagerNamespace', $managerN
 $entityManagerGenerator->setExternalVariable('tableDescriptorNamespace', $descriptorNamespace);
 $entityManagerGenerator->setExternalVariable('deserializerNamespace', $deserializerNamespace);
 $entityManagerGenerator->addPattern(new \Hooloovoo\Generator\Pattern\MultiFile($managerDir, __DIR__ . '/../template/persistence/entity-manager.php'));
-$entityManagerGenerator->addPattern(new \Hooloovoo\Generator\Pattern\MultiFile($exportDeserializerDir, __DIR__ . '/../template/persistence/deserializer.php'));
+$entityManagerGenerator->addPattern(new \Hooloovoo\Generator\Pattern\MultiFile($deserializerDir, __DIR__ . '/../template/persistence/deserializer.php'));
+$entityManagerGenerator->addPattern(new \Hooloovoo\Generator\Pattern\MultiFile($exportDeserializerDir, __DIR__ . '/../template/persistence/deserializer-export.php'));
 $entityManagerGenerator->addPattern($servicesPattern);
 
 $entityManagerGenerator->run();

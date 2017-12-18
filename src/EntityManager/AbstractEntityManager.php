@@ -81,11 +81,27 @@ abstract class AbstractEntityManager implements EntityManagerInterface
     }
 
     /**
+     * @param array $fieldValues
+     * @param bool $returnObject
+     * @return mixed
+     */
+    protected function _create(array $fieldValues, bool $returnObject = true)
+    {
+        $entity = $this->getNewEntity();
+
+        foreach ($fieldValues as $fieldName => $value) {
+            $entity->{$fieldName} = $value;
+        }
+
+        return $this->_createByEntity($entity, $returnObject);
+    }
+
+    /**
      * @param DataObjectInterface $dataObject
      * @param bool $returnObject
      * @return mixed
      */
-    protected function _create(DataObjectInterface $dataObject, bool $returnObject = true)
+    protected function _createByEntity(DataObjectInterface $dataObject, bool $returnObject = true)
     {
         $this->_dispatcherConnector->beforeCreate($this->getEventName(self::EVENT_PREFIX_CREATE_BEFORE), $this, $dataObject);
 
@@ -265,7 +281,7 @@ abstract class AbstractEntityManager implements EntityManagerInterface
 
         if (count($collection) != count($primaryKeys)) {
             $missingKeys = implode(', ', array_diff($primaryKeys, array_keys($collection)));
-            throw new EntityNotFoundException("Entities not found ($missingKeys)");
+            throw new EntityNotFoundException($missingKeys);
         }
 
         return $collection;

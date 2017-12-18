@@ -50,4 +50,9 @@ interface EntityManagerInterface extends ComponentManagerInterface
      * @param int $primaryKey
      */
     public function delete(int $primaryKey) ;
+
+    /**
+     * @return DataObjectInterface
+     */
+    public function getNewEntity();
 }

@@ -171,13 +171,23 @@ class <?= $managerName ?> extends AbstractEntityManager
     }
 
     /**
+     * @param array $fieldValues
+     * @param bool $returnObject
+     * @return Entity
+     */
+    public function create(array $fieldValues, bool $returnObject = true)
+    {
+        return $this->_create($fieldValues, $returnObject);
+    }
+
+    /**
      * @param Entity $entity
      * @param bool $returnObject
      * @return Entity
      */
-    public function create(Entity $entity, bool $returnObject = true)
+    public function createByEntity(Entity $entity, bool $returnObject = true)
     {
-        return $this->_create($entity, $returnObject);
+        return $this->_createByEntity($entity, $returnObject);
     }
 
     /**
@@ -224,7 +234,8 @@ class <?= $managerName ?> extends AbstractEntityManager
     /**
      * @return Entity
      */
-    public function getNewEntity() : Entity {
+    public function getNewEntity()
+    {
         return new Entity();
     }
 }
