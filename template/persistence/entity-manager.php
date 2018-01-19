@@ -37,6 +37,14 @@ use <?= $import ?>;
  */
 class <?= $managerName ?> extends AbstractEntityManager
 {
+    <?php foreach ($fields as $field): ?>
+    const <?= $field->getFieldConstantName() ?> = '<?= $field->getName() ?>';
+    <?php endforeach; ?>
+
+    <?php foreach ($fields as $field): ?>
+    const <?= $field->getColumnConstantName() ?> = '<?= $field->getColumnName() ?>';
+    <?php endforeach; ?>
+
     const EVENT_CREATE_BEFORE = self::EVENT_PREFIX_CREATE_BEFORE . '.<?= strtolower($managerName) ?>';
     const EVENT_CREATE_AFTER = self::EVENT_PREFIX_CREATE_AFTER . '.<?= strtolower($managerName) ?>';
     const EVENT_UPDATE_BEFORE = self::EVENT_PREFIX_UPDATE_BEFORE . '.<?= strtolower($managerName) ?>';

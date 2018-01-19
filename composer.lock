@@ -53,12 +53,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/vnejedly/data-objects.git",
-                "reference": "0f3564b7613ee3882c201b207eb894b0fe1e3cda"
+                "reference": "08f4b63462830fcb3e47ac10ab9276d267377ba5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/vnejedly/data-objects/zipball/0f3564b7613ee3882c201b207eb894b0fe1e3cda",
-                "reference": "0f3564b7613ee3882c201b207eb894b0fe1e3cda",
+                "url": "https://api.github.com/repos/vnejedly/data-objects/zipball/08f4b63462830fcb3e47ac10ab9276d267377ba5",
+                "reference": "08f4b63462830fcb3e47ac10ab9276d267377ba5",
                 "shasum": ""
             },
             "require": {
@@ -87,7 +87,7 @@
                 "data object",
                 "entity"
             ],
-            "time": "2017-10-11T17:03:27+00:00"
+            "time": "2018-01-19T10:40:01+00:00"
         },
         {
             "name": "hooloovoo/database",
@@ -269,12 +269,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/vnejedly/query-engine.git",
-                "reference": "12e1e2c2c502b58229575122021c30cc8c0b741d"
+                "reference": "6c44a243c71311b703294642a6cc7942c6a15b9d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/vnejedly/query-engine/zipball/12e1e2c2c502b58229575122021c30cc8c0b741d",
-                "reference": "12e1e2c2c502b58229575122021c30cc8c0b741d",
+                "url": "https://api.github.com/repos/vnejedly/query-engine/zipball/6c44a243c71311b703294642a6cc7942c6a15b9d",
+                "reference": "6c44a243c71311b703294642a6cc7942c6a15b9d",
                 "shasum": ""
             },
             "require": {
@@ -305,7 +305,7 @@
                 "sorter",
                 "url query"
             ],
-            "time": "2017-10-13T11:04:08+00:00"
+            "time": "2017-12-11T18:43:04+00:00"
         }
     ],
     "packages-dev": [],

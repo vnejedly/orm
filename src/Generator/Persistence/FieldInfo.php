@@ -10,6 +10,9 @@ use Hooloovoo\ORM\Generator\Persistence\TypeMapping\FieldDef\FieldObjectDef;
  */
 class FieldInfo
 {
+    const FIELD_CONSTANT_PREFIX = 'FIELD_';
+    const COLUMN_CONSTANT_PREFIX = 'COLUMN_';
+
     /** @var string */
     protected $_name;
 
@@ -112,5 +115,29 @@ class FieldInfo
     public function getColumn() : Column
     {
         return $this->_column;
+    }
+
+    /**
+     * @return string
+     */
+    public function getColumnName() : string
+    {
+        return $this->getColumn()->getColumnName();
+    }
+
+    /**
+     * @return string
+     */
+    public function getFieldConstantName() : string
+    {
+        return self::FIELD_CONSTANT_PREFIX . strtoupper($this->getColumnName());
+    }
+
+    /**
+     * @return string
+     */
+    public function getColumnConstantName() : string
+    {
+        return self::COLUMN_CONSTANT_PREFIX . strtoupper($this->getColumnName());
     }
 }
