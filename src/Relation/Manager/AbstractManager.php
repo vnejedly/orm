@@ -153,6 +153,10 @@ abstract class AbstractManager implements ManagerInterface
             $subCollectionUnsorted = $this->_getByCondition($condition);
 
             foreach ($primaryKeysSubSet as $primaryKey) {
+                if (!array_key_exists($primaryKey, $subCollectionUnsorted)) {
+                    throw new EntityNotFoundException($this->getTableMapping()->getEntityName());
+                }
+
                 $collection[$primaryKey] = $subCollectionUnsorted[$primaryKey];
             }
 
