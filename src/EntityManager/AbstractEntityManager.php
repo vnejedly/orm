@@ -9,6 +9,7 @@ use Hooloovoo\DataObjects\DataObjectInterface;
 use Hooloovoo\ORM\Exception\EntityNotFoundException;
 use Hooloovoo\ORM\Exception\LogicException;
 use Hooloovoo\ORM\Exception\NonOriginalEntityException;
+use Hooloovoo\ORM\Generator\Persistence\TypeMapping\MysqlDataTypes;
 use Hooloovoo\QueryEngine\Query\Query;
 
 /**
@@ -389,7 +390,15 @@ abstract class AbstractEntityManager implements EntityManagerInterface
     {
         $subConditions = [];
         foreach ($fieldSet as $name => $field) {
-            $subConditions[] = '{' . $name . '} = :' . $name;
+            $columnName = $this->_tableMapping->getColumnForField($name);
+            $type = strtoupper($this->_tableMapping->getColumn($columnName)->getDataType());
+
+            $expression = '{' . $name . '}';
+            if ($type == MysqlDataTypes::FLOAT) {
+                $expression = "CAST($expression AS CHAR)";
+            }
+
+            $subConditions[] = "$expression = :$name";
         }
 
         if (count($fieldSet) > 0) {
