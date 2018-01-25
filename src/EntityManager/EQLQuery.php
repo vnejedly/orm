@@ -57,7 +57,7 @@ class EQLQuery extends DatabaseQuery
     protected function getReservedReplacements() : array
     {
         return [
-            $this->_tableMapping->getName(),
+            "`{$this->_tableMapping->getName()}`",
             implode(', ', $this->getQuotedColumnNames($this->_tableMapping)),
             "COUNT({$this->_tableMapping->getSimplePrimaryKey()->getColumnName()})"
         ];

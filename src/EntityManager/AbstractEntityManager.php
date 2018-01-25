@@ -128,7 +128,7 @@ abstract class AbstractEntityManager implements EntityManagerInterface
         $implodedPlaceholders = implode(', ', $placeHolders);
 
         $query = $this->_database->createQuery("
-            INSERT INTO {$this->_tableMapping->getName()} ($implodedColumnNames) 
+            INSERT INTO `{$this->_tableMapping->getName()}` ($implodedColumnNames) 
             VALUES ($implodedPlaceholders)
         ");
 

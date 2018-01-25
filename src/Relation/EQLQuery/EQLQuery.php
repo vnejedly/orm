@@ -257,7 +257,7 @@ class EQLQuery extends Query implements EQLQueryInterface
         $placeholders = $replacements = [];
         foreach ($this->_componentTables as $componentTable) {
             $placeholders[] = self::CH_OPEN . "{$componentTable->getEntityName()}" . self::CH_CLOSE;
-            $replacements[] = $componentTable->getName();
+            $replacements[] = "`{$componentTable->getName()}`";
         }
         $queryString = str_replace($placeholders, $replacements, $queryString);
 
