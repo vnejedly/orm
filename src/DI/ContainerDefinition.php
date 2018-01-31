@@ -25,6 +25,9 @@ class ContainerDefinition extends AbstractDefinitionClass
     /** @var string */
     protected $password;
 
+    /** @var bool */
+    protected $emulatePrepares;
+
     /**
      * Container constructor
      *
@@ -32,17 +35,20 @@ class ContainerDefinition extends AbstractDefinitionClass
      * @param string $database
      * @param string $user
      * @param string $password
+     * @param bool $emulatePrepares
      */
     public function __construct(
         string $host,
         string $database,
         string $user,
-        string $password
+        string $password,
+        bool $emulatePrepares = true
     ) {
         $this->host = $host;
         $this->database = $database;
         $this->user = $user;
         $this->password = $password;
+        $this->emulatePrepares = $emulatePrepares;
     }
 
     /**
@@ -54,7 +60,8 @@ class ContainerDefinition extends AbstractDefinitionClass
             $this->host,
             $this->database,
             $this->user,
-            $this->password
+            $this->password,
+            $this->emulatePrepares
         ));
 
         $container->add(DispatcherConnectorInterface::class, new Singleton(function () use ($container) {

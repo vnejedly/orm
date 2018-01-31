@@ -2,6 +2,7 @@
 namespace Hooloovoo\ORM\Relation\Manager;
 
 use Hooloovoo\Database\Database;
+use Hooloovoo\Database\Helper\TableLock;
 use Hooloovoo\DatabaseMapping\Table;
 use Hooloovoo\DataObjects\DataObjectInterface;
 use Hooloovoo\ORM\ComponentManagerInterface;
@@ -102,6 +103,26 @@ abstract class AbstractManager implements ManagerInterface
         }
 
         return $query;
+    }
+
+    /**
+     * @param bool $write
+     * @return TableLock
+     */
+    public function lockTables(bool $write) : TableLock
+    {
+        $lock = $this->_database->createLock();
+        foreach ($this->_componentManagers as $componentManager) {
+            if ($componentManager instanceof self) {
+                $subLock = $componentManager->lockTables($write);
+                $lock->mergeLock($subLock);
+            } else {
+                $tableName = $componentManager->getTableMapping()->getName();
+                $lock->addTable($tableName, $write);
+            }
+        }
+
+        return $lock;
     }
 
     /**
