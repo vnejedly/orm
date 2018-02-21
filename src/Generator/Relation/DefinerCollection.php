@@ -68,6 +68,11 @@ class DefinerCollection
                 $type = $child['type'];
                 $name = $child['name'];
 
+                $mapTableName = null;
+                if (array_key_exists('mapTable', $child)) {
+                    $mapTableName = $child['mapTable'];
+                }
+
                 if ($type == 'table') {
                     $component = new ComponentTable($this->_schema->getTable($name));
                 } elseif ($type == 'relation') {
@@ -76,7 +81,7 @@ class DefinerCollection
                     throw new LogicException("Unknown child type $type");
                 }
 
-                $definer->addChild($component);
+                $definer->addChild($component, $mapTableName);
             }
         }
     }

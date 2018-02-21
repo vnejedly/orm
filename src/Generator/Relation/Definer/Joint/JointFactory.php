@@ -26,19 +26,34 @@ class JointFactory
     /**
      * @param ComponentTable $parent
      * @param ComponentInterface $child
+     * @param string $mapTableName
      * @return JointInterface
      */
-    public function getJoint(ComponentTable $parent, ComponentInterface $child) : JointInterface
+    public function getJoint(
+        ComponentTable $parent,
+        ComponentInterface $child,
+        string $mapTableName = null
+    ) : JointInterface
     {
-        if ($parent->getComponentTableMapping()->hasReference($child->getComponentTableMapping()->getName())) {
-            return new InParent($parent, $child);
-        } elseif ($child->getComponentTableMapping()->hasReference($parent->getComponentTableMapping()->getName())) {
-            return new InChild($parent, $child);
-        } else {
-            return new InTable($parent, $child, $this->_schema->findMapTable(
+        if (!is_null($mapTableName)) {
+            return new InTable($parent, $child, $this->_schema->getMapTable(
                 $parent->getComponentTableMapping()->getName(),
-                $child->getComponentTableMapping()->getName()
+                $child->getComponentTableMapping()->getName(),
+                $mapTableName
             ));
         }
+
+        if ($parent->getComponentTableMapping()->hasReference($child->getComponentTableMapping()->getName())) {
+            return new InParent($parent, $child);
+        }
+
+        if ($child->getComponentTableMapping()->hasReference($parent->getComponentTableMapping()->getName())) {
+            return new InChild($parent, $child);
+        }
+
+        return new InTable($parent, $child, $this->_schema->findMapTable(
+            $parent->getComponentTableMapping()->getName(),
+            $child->getComponentTableMapping()->getName()
+        ));
     }
 }

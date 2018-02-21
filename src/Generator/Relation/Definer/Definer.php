@@ -47,10 +47,11 @@ class Definer
 
     /**
      * @param ComponentInterface $child
+     * @param string $mapTableName
      */
-    public function addChild(ComponentInterface $child)
+    public function addChild(ComponentInterface $child, string $mapTableName = null)
     {
-        $this->_children[] = $this->_jointFactory->getJoint($this->_parent, $child);
+        $this->_children[] = $this->_jointFactory->getJoint($this->_parent, $child, $mapTableName);
     }
 
     /**

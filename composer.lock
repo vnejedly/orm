@@ -140,12 +140,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/vnejedly/db-mapping.git",
-                "reference": "05829e68bbdfe578dc92ee8f3086bc28d71638db"
+                "reference": "c810102c59b20d668116fa842eb4b047aaf0608b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/vnejedly/db-mapping/zipball/05829e68bbdfe578dc92ee8f3086bc28d71638db",
-                "reference": "05829e68bbdfe578dc92ee8f3086bc28d71638db",
+                "url": "https://api.github.com/repos/vnejedly/db-mapping/zipball/c810102c59b20d668116fa842eb4b047aaf0608b",
+                "reference": "c810102c59b20d668116fa842eb4b047aaf0608b",
                 "shasum": ""
             },
             "require": {
@@ -176,7 +176,7 @@
                 "database info",
                 "database mapping"
             ],
-            "time": "2017-10-01T22:29:42+00:00"
+            "time": "2018-02-21T15:13:20+00:00"
         },
         {
             "name": "hooloovoo/di",

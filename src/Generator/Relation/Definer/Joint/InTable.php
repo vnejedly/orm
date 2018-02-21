@@ -55,13 +55,13 @@ class InTable extends AbstractJoint
      */
     public function getJoinClauses(): array
     {
-        $mapTableName = $this->_mapTable->getName();
+        $mapTableName = "`{$this->_mapTable->getName()}`";
 
         $parentEntityName = $this->_parent->getComponentEntityName();
         $childEntityName = $this->_child->getComponentTableMapping()->getEntityName();
 
-        $parentRefColumnStr = $mapTableName . '.' . $this->getParentReferencingColumn()->getColumnName();
-        $childRefColumnStr = $mapTableName . '.' . $this->getChildReferencingColumn()->getColumnName();
+        $parentRefColumnStr = "$mapTableName.`{$this->getParentReferencingColumn()->getColumnName()}`";
+        $childRefColumnStr = "$mapTableName.`{$this->getChildReferencingColumn()->getColumnName()}`";
 
         $parentPKFieldName = $this->_parent->getComponentTableMapping()->getSimplePrimaryKey()->getEntityFieldName();
         $childPKFieldName = $this->_child->getComponentTableMapping()->getSimplePrimaryKey()->getEntityFieldName();
