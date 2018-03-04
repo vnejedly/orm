@@ -11,6 +11,6 @@ abstract class AbstractComponent implements ComponentInterface
      */
     public function getComponentFieldName() : string
     {
-        return lcfirst($this->getComponentEntityName());
+        return lcfirst($this->getComponentTableMapping()->getEntityName());
     }
 }

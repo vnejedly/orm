@@ -6,7 +6,7 @@ use Hooloovoo\Database\Helper\TableLock;
 use Hooloovoo\DatabaseMapping\Table;
 use Hooloovoo\DataObjects\DataObjectInterface;
 use Hooloovoo\ORM\ComponentManagerInterface;
-use Hooloovoo\ORM\EntityManager\EntityManagerInterface;
+use Hooloovoo\ORM\Persistence\EntityManagerInterface;
 use Hooloovoo\ORM\Exception\EntityNotFoundException;
 use Hooloovoo\ORM\Exception\LogicException;
 use Hooloovoo\ORM\Relation\EQLQuery\EQLQuery;

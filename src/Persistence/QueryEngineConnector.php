@@ -1,5 +1,5 @@
 <?php
-namespace Hooloovoo\ORM\EntityManager;
+namespace Hooloovoo\ORM\Persistence;
 
 use Hooloovoo\ORM\AbstractQueryEngineConnector;
 

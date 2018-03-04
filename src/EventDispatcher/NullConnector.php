@@ -2,7 +2,7 @@
 namespace Hooloovoo\ORM\EventDispatcher;
 
 use Hooloovoo\DataObjects\DataObjectInterface;
-use Hooloovoo\ORM\EntityManager\EntityManagerInterface;
+use Hooloovoo\ORM\Persistence\EntityManagerInterface;
 
 /**
  * Class NullConnector

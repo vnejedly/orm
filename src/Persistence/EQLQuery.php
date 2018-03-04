@@ -1,5 +1,5 @@
 <?php
-namespace Hooloovoo\ORM\EntityManager;
+namespace Hooloovoo\ORM\Persistence;
 
 use Hooloovoo\Database\Query\Query as DatabaseQuery;
 use Hooloovoo\DatabaseMapping\Table as TableMapping;

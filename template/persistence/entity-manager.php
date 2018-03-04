@@ -15,9 +15,9 @@
 namespace <?= $entityManagerNamespace ?>;
 
 use Hooloovoo\Database\Database;
-use Hooloovoo\ORM\EntityManager\EQLQuery;
-use Hooloovoo\ORM\EntityManager\AbstractEntityManager;
-use Hooloovoo\ORM\EntityManager\QueryEngineConnector;
+use Hooloovoo\ORM\Persistence\EQLQuery;
+use Hooloovoo\ORM\Persistence\AbstractEntityManager;
+use Hooloovoo\ORM\Persistence\QueryEngineConnector;
 use <?= $entityNamespace ?>\<?= $entityName ?> as Entity;
 use <?= $tableDescriptorNamespace ?>\<?= $tableDescriptorName ?> as Descriptor;
 use Hooloovoo\ORM\EventDispatcher\ConnectorInterface as DispatcherConnector;

@@ -2,7 +2,7 @@
 namespace Hooloovoo\ORM\Relation\Manager;
 
 use Hooloovoo\ORM\ComponentManagerInterface;
-use Hooloovoo\ORM\EntityManager\EntityManagerInterface;
+use Hooloovoo\ORM\Persistence\EntityManagerInterface;
 use Hooloovoo\ORM\Relation\EQLQuery\EQLQueryInterface;
 
 /**
