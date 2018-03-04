@@ -16,9 +16,6 @@ use Hooloovoo\ORM\Generator\Relation\Definer\Joint\JointFactory;
  */
 class ContainerDefinition extends AbstractDefinitionClass
 {
-    const ENTITIES_GENERATOR = 'entitiesGenerator\Relation';
-    const MANAGERS_GENERATOR = 'managersGenerator\Relation';
-
     /** @var array */
     protected $config;
 
@@ -60,12 +57,8 @@ class ContainerDefinition extends AbstractDefinitionClass
             );
         }));
 
-        $container->add(self::ENTITIES_GENERATOR, new Singleton(function () use ($container) {
-            return new Generator($container->get(EntitiesResolver::class));
-        }));
-
-        $container->add(self::MANAGERS_GENERATOR, new Singleton(function () use ($container) {
-            return new Generator($container->get(ManagersResolver::class));
+        $container->add(Generator::class, new Singleton(function () use ($container) {
+            return new Generator($container->get(Resolver::class));
         }));
     }
 }

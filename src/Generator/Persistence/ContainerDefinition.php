@@ -15,10 +15,6 @@ use Hooloovoo\Generator\Generator;
  */
 class ContainerDefinition extends AbstractDefinitionClass
 {
-    const ENTITIES_GENERATOR = 'entitiesGenerator\Persistence';
-    const TABLE_INFO_GENERATOR = 'tableInfoGenerator\Persistence';
-    const ENTITY_MANAGERS_GENERATOR = 'entityManagersGenerator\Persistence';
-
     /** @var string */
     protected $host;
 
@@ -71,16 +67,8 @@ class ContainerDefinition extends AbstractDefinitionClass
             return new Schema($container->get(FromDatabase::class));
         }));
 
-        $container->add(self::ENTITIES_GENERATOR, new Singleton(function () use ($container) {
-            return new Generator($container->get(EntitiesResolver::class));
-        }));
-
-        $container->add(self::TABLE_INFO_GENERATOR, new Singleton(function () use ($container) {
-            return new Generator($container->get(TableInfoResolver::class));
-        }));
-
-        $container->add(self::ENTITY_MANAGERS_GENERATOR, new Singleton(function () use ($container) {
-            return new Generator($container->get(EntityManagersResolver::class));
+        $container->add(Generator::class, new Singleton(function () use ($container) {
+            return new Generator($container->get(Resolver::class));
         }));
     }
 }

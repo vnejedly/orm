@@ -28,7 +28,7 @@ abstract class FieldObjectDef extends AbstractFieldDef
 
     public function getValueClassImport() : string
     {
-        return "{$this->_valueClassName} AS {$this->_valueClassAlias}";
+        return "{$this->_valueClassName} as {$this->_valueClassAlias}";
     }
 
     /**

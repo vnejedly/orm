@@ -1,22 +1,36 @@
 <?php
 namespace Hooloovoo\ORM\Generator\Relation;
 
+use Hooloovoo\Generator\ResolverInterface;
 use Hooloovoo\ORM\Generator\Relation\Definer\Definer;
 use Hooloovoo\ORM\Generator\Relation\Definer\FieldInfo;
 use Generator;
 
 /**
- * Class EntitiesResolver
+ * Class Resolver
  */
-class EntitiesResolver extends AbstractResolver
+class Resolver implements ResolverInterface
 {
+    /** @var DefinerCollection */
+    protected $_definerCollection;
+
+    /**
+     * AbstractResolver constructor.
+     *
+     * @param DefinerCollection $definerCollection
+     */
+    public function __construct(DefinerCollection $definerCollection)
+    {
+        $this->_definerCollection = $definerCollection;
+    }
+
     /**
      * @return Generator
      */
     public function yieldVariables() : Generator
     {
         foreach ($this->_definerCollection->getDefiners() as $definer) {
-            echo "Generating relational entity {$definer->getName()}\n";
+            echo "Generating relational layer {$definer->getName()}\n";
             yield $this->resolveVariables($definer);
         }
     }
@@ -45,10 +59,10 @@ class EntitiesResolver extends AbstractResolver
         return [
             'fileName' => "{$definer->getName()}.php",
             'className' => $definer->getName(),
-            'fields' => $fields,
             'importEntities' => $importEntities,
             'parentComponent' => $definer->getParent(),
-            'hasCollections' => $hasCollections
+            'hasCollections' => $hasCollections,
+            'fields' => $fields,
         ];
     }
 }

@@ -12,9 +12,6 @@ namespace <?= $deserializerNamespace ?>;
 
 use <?= $projectNamespace ?>\DeserializerInterface;
 use <?= $entityNamespace ?>\<?= $entityName ?> as Entity;
-<?php foreach ($imports as $import): ?>
-use <?= $import ?>;
-<?php endforeach; ?>
 
 /**
  * Class <?= $entityName ?>

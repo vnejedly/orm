@@ -29,11 +29,11 @@ $relationDeserializerNamespace = $relation['namespace'] . '\\Deserializer';
 $persistenceManagerNamespace = $persistence['namespace'] . '\\Manager';
 $persistenceDeserializerNamespace = $persistence['namespace'] . '\\Deserializer';
 
-mkdir($entityDir);
-mkdir($genericManagerDir);
-mkdir($managerDir);
-mkdir($exportEntityDir);
-mkdir($exportDeserializerDir);
+if (!is_dir($entityDir)) mkdir($entityDir);
+if (!is_dir($genericManagerDir)) mkdir($genericManagerDir);
+if (!is_dir($managerDir)) mkdir($managerDir);
+if (!is_dir($exportEntityDir)) mkdir($exportEntityDir);
+if (!is_dir($exportDeserializerDir)) mkdir($exportDeserializerDir);
 
 $servicesPattern = new \Hooloovoo\Generator\Pattern\SingleFile(
     "$exportConfigDir/services.yml",
@@ -43,26 +43,21 @@ $servicesPattern = new \Hooloovoo\Generator\Pattern\SingleFile(
 $servicesPattern->setContentPlaceholder('{{{_content_relation_}}}');
 
 /** @var \Hooloovoo\Generator\Generator $entitiesGenerator */
-$entitiesGenerator = $container->get(\Hooloovoo\ORM\Generator\Relation\ContainerDefinition::ENTITIES_GENERATOR);
-$entitiesGenerator->setExternalVariable('projectNamespace', $projectNamespace);
-$entitiesGenerator->setExternalVariable('persistenceEntityNamespace', $persistenceEntityNamespace);
-$entitiesGenerator->setExternalVariable('relationEntityNamespace', $relationEntityNamespace);
-$entitiesGenerator->setExternalVariable('persistenceDeserializerNamespace', $persistenceDeserializerNamespace);
-$entitiesGenerator->setExternalVariable('relationDeserializerNamespace', $relationDeserializerNamespace);
-$entitiesGenerator->addPattern(new \Hooloovoo\Generator\Pattern\MultiFile($entityDir, __DIR__ . '/../template/relation/entity.php'));
-$entitiesGenerator->addPattern(new \Hooloovoo\Generator\Pattern\MultiFile($exportEntityDir, __DIR__ . '/../template/relation/entity.php'));
-$entitiesGenerator->addPattern(new \Hooloovoo\Generator\Pattern\MultiFile($exportDeserializerDir, __DIR__ . '/../template/relation/deserializer.php'));
-$entitiesGenerator->addPattern($servicesPattern);
-$entitiesGenerator->run();
-
-/** @var \Hooloovoo\Generator\Generator $genericManagersGenerator */
-$genericManagersGenerator = $container->get(\Hooloovoo\ORM\Generator\Relation\ContainerDefinition::MANAGERS_GENERATOR);
-$genericManagersGenerator->setExternalVariable('persistenceManagerNamespace', $persistenceManagerNamespace);
-$genericManagersGenerator->setExternalVariable('relationManagerGenericNamespace', $relationManagerGenericNamespace);
-$genericManagersGenerator->setExternalVariable('relationManagerNamespace', $relationManagerNamespace);
-$genericManagersGenerator->setExternalVariable('relationEntityNamespace', $relationEntityNamespace);
-$genericManagersGenerator->addPattern(new \Hooloovoo\Generator\Pattern\MultiFile($genericManagerDir, __DIR__ . '/../template/relation/generic-manager.php'));
-$genericManagersGenerator->addPattern(new \Hooloovoo\Generator\Pattern\MultiFile($managerDir, __DIR__ . '/../template/relation/manager.php', false));
-$genericManagersGenerator->run();
+$generator = $container->get(Hooloovoo\Generator\Generator::class);
+$generator->setExternalVariable('projectNamespace', $projectNamespace);
+$generator->setExternalVariable('persistenceEntityNamespace', $persistenceEntityNamespace);
+$generator->setExternalVariable('persistenceManagerNamespace', $persistenceManagerNamespace);
+$generator->setExternalVariable('persistenceDeserializerNamespace', $persistenceDeserializerNamespace);
+$generator->setExternalVariable('relationEntityNamespace', $relationEntityNamespace);
+$generator->setExternalVariable('relationManagerGenericNamespace', $relationManagerGenericNamespace);
+$generator->setExternalVariable('relationManagerNamespace', $relationManagerNamespace);
+$generator->setExternalVariable('relationDeserializerNamespace', $relationDeserializerNamespace);
+$generator->addPattern(new \Hooloovoo\Generator\Pattern\MultiFile($entityDir, __DIR__ . '/../template/relation/entity.php'));
+$generator->addPattern(new \Hooloovoo\Generator\Pattern\MultiFile($genericManagerDir, __DIR__ . '/../template/relation/generic-manager.php'));
+$generator->addPattern(new \Hooloovoo\Generator\Pattern\MultiFile($managerDir, __DIR__ . '/../template/relation/manager.php', false));
+$generator->addPattern(new \Hooloovoo\Generator\Pattern\MultiFile($exportEntityDir, __DIR__ . '/../template/relation/entity.php'));
+$generator->addPattern(new \Hooloovoo\Generator\Pattern\MultiFile($exportDeserializerDir, __DIR__ . '/../template/relation/deserializer.php'));
+$generator->addPattern($servicesPattern);
+$generator->run();
 
 unlink("$exportConfigDir/services-temp.yml");

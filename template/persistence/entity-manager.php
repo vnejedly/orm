@@ -10,6 +10,7 @@
  * @var \Hooloovoo\ORM\Generator\Persistence\FieldInfo[] $fields
  * @var \Hooloovoo\ORM\Generator\Persistence\FieldInfo[] $nonPKFields
  * @var string[] $imports
+ * @var string[] $valueClassImports
  */ ?>
 namespace <?= $entityManagerNamespace ?>;
 
@@ -22,7 +23,7 @@ use <?= $tableDescriptorNamespace ?>\<?= $tableDescriptorName ?> as Descriptor;
 use Hooloovoo\ORM\EventDispatcher\ConnectorInterface as DispatcherConnector;
 use Hooloovoo\DataObjects\DataObjectInterface;
 use Hooloovoo\QueryEngine\Query\Query;
-<?php foreach ($imports as $import): ?>
+<?php foreach ($valueClassImports as $import): ?>
 use <?= $import ?>;
 <?php endforeach; ?>
 
