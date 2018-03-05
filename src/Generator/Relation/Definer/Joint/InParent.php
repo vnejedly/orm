@@ -41,7 +41,7 @@ class InParent extends AbstractJoint
         $childFieldStr = '{' . $childEntityName . '.' . $childFieldName .'}';
 
         return [
-            "LEFT JOIN $childEntityStr ON $parentFieldStr = $childFieldStr"
+            $childEntityName => "LEFT JOIN $childEntityStr ON $parentFieldStr = $childFieldStr"
         ];
     }
 

@@ -71,8 +71,8 @@ class InTable extends AbstractJoint
         $childFieldStr = '{' . $childEntityName . '.' . $childPKFieldName . '}';
 
         return [
-            "LEFT JOIN $mapTableName ON $parentFieldStr = $parentRefColumnStr",
-            "LEFT JOIN $childEntityStr ON $childRefColumnStr = $childFieldStr",
+            $mapTableName => "LEFT JOIN $mapTableName ON $parentFieldStr = $parentRefColumnStr",
+            $childEntityName => "LEFT JOIN $childEntityStr ON $childRefColumnStr = $childFieldStr",
         ];
     }
 

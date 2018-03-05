@@ -13,6 +13,7 @@ use Hooloovoo\ORM\Relation\EQLQuery\EQLQuery;
 use Hooloovoo\ORM\Relation\EQLQuery\EQLQueryInterface;
 use Hooloovoo\ORM\Relation\EQLQuery\QueryEngineConnector;
 use Hooloovoo\ORM\Relation\GroupedArray;
+use Hooloovoo\ORM\Relation\Restrictor\Restrictor;
 use Hooloovoo\ORM\Utils\ArrayPager;
 use Hooloovoo\ORM\Utils\DataSetHelper;
 use Hooloovoo\QueryEngine\Query\Query;
@@ -106,6 +107,14 @@ abstract class AbstractManager implements ManagerInterface
     }
 
     /**
+     * @return Restrictor
+     */
+    public function getRestrictor() : Restrictor
+    {
+        return new Restrictor();
+    }
+
+    /**
      * @param bool $write
      * @return TableLock
      */
@@ -136,11 +145,12 @@ abstract class AbstractManager implements ManagerInterface
 
     /**
      * @param int $primaryKey
+     * @param Restrictor $restrictor
      * @return mixed
      */
-    protected function _getByPrimaryKey(int $primaryKey)
+    protected function _getByPrimaryKey(int $primaryKey, Restrictor $restrictor = null)
     {
-        $collection = $this->_getByPrimaryKeys([$primaryKey]);
+        $collection = $this->_getByPrimaryKeys([$primaryKey], $restrictor);
 
         if (count($collection) < 1) {
             throw new EntityNotFoundException($this->_parentManager->getTableMapping()->getEntityName());
@@ -151,9 +161,10 @@ abstract class AbstractManager implements ManagerInterface
 
     /**
      * @param int[] $primaryKeys
+     * @param Restrictor $restrictor
      * @return mixed[]
      */
-    protected function _getByPrimaryKeys(array $primaryKeys) : array
+    protected function _getByPrimaryKeys(array $primaryKeys, Restrictor $restrictor = null) : array
     {
         $count = count($primaryKeys);
 
@@ -171,7 +182,7 @@ abstract class AbstractManager implements ManagerInterface
             $condition = $this->getEQLQuery('WHERE {@.#} IN (:primaryKeys)');
             $condition->addMultiParam('primaryKeys', $primaryKeysSubSet, Database::PARAM_INT);
 
-            $subCollectionUnsorted = $this->_getByCondition($condition);
+            $subCollectionUnsorted = $this->_getByCondition($condition, $restrictor);
 
             foreach ($primaryKeysSubSet as $primaryKey) {
                 if (!array_key_exists($primaryKey, $subCollectionUnsorted)) {
@@ -189,11 +200,12 @@ abstract class AbstractManager implements ManagerInterface
 
     /**
      * @param EQLQueryInterface $condition
+     * @param Restrictor $restrictor
      * @return mixed
      */
-    protected function _getSingleByCondition(EQLQueryInterface $condition)
+    protected function _getSingleByCondition(EQLQueryInterface $condition, Restrictor $restrictor = null)
     {
-        $collection = $this->_getByCondition($condition);
+        $collection = $this->_getByCondition($condition, $restrictor);
 
         if (count($collection) < 1) {
             throw new EntityNotFoundException($this->_parentManager->getTableMapping()->getEntityName());
@@ -204,13 +216,19 @@ abstract class AbstractManager implements ManagerInterface
 
     /**
      * @param EQLQueryInterface $condition
+     * @param Restrictor $restrictor
      * @return mixed[]
      */
-    protected function _getByCondition(EQLQueryInterface $condition) : array
+    protected function _getByCondition(EQLQueryInterface $condition, Restrictor $restrictor = null) : array
     {
-        $query = $this->getBasicCompositeSelect('{*.$}');
-        $query->append($condition->getQueryString());
+        if (is_null($restrictor)) {
+            $restrictor = $this->getRestrictor();
+        }
 
+        $query = $this->getBasicCompositeSelect('{*.$}', $restrictor);
+        $restrictor->parametrizeQuery($query);
+
+        $query->append($condition->getQueryString());
         foreach ($condition->getParams() as $name => $param) {
             $query->addParam($name, $param->getValue(), $param->getType());
         }
@@ -242,12 +260,14 @@ abstract class AbstractManager implements ManagerInterface
      * @param Query $query
      * @param QueryEngineConnector $queryEngineConnector
      * @param int $totalCount
+     * @param Restrictor $restrictor
      * @return array
      */
     protected function _getByQueryEngine(
         Query $query,
         QueryEngineConnector $queryEngineConnector,
-        int &$totalCount = null
+        int &$totalCount = null,
+        Restrictor $restrictor = null
     ) : array
     {
         $queryEngineConnector->applyQuery($query);
@@ -256,7 +276,7 @@ abstract class AbstractManager implements ManagerInterface
         $queryEngineConnector->applyPager($query);
         $primaryKeys = $this->_getPrimaryKeysByCondition($queryEngineConnector->getEQLQuery());
 
-        return $this->_getByPrimaryKeys($primaryKeys);
+        return $this->_getByPrimaryKeys($primaryKeys, $restrictor);
     }
 
     /**
@@ -302,9 +322,10 @@ abstract class AbstractManager implements ManagerInterface
 
     /**
      * @param string $selection
+     * @param Restrictor $restrictor
      * @return EQLQueryInterface
      */
-    abstract protected function getBasicCompositeSelect(string $selection) : EQLQueryInterface;
+    abstract protected function getBasicCompositeSelect(string $selection, Restrictor $restrictor) : EQLQueryInterface;
 
     /**
      * @param string $selection
