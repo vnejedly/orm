@@ -7,11 +7,15 @@
  * @var string $entityName
  * @var \Hooloovoo\ORM\Generator\Persistence\FieldInfo[] $fields
  * @var string[] $imports
+ * @var string[] $valueClassImports
  */ ?>
 namespace <?= $deserializerNamespace ?>;
 
 use Hooloovoo\ORM\DeserializerInterface;
 use <?= $entityNamespace ?>\<?= $entityName ?> as Entity;
+<?php foreach ($valueClassImports as $import): ?>
+use <?= $import ?>;
+<?php endforeach; ?>
 
 /**
  * Class <?= $entityName ?>
