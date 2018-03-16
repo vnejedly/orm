@@ -218,8 +218,8 @@ abstract class AbstractEntityManager implements EntityManagerInterface
             $setString = implode(', ', $parts);
 
             $query = $this->_database->createQuery("
-                UPDATE {$this->_tableMapping->getName()} SET $setString 
-                WHERE {$this->_tableMapping->getSimplePrimaryKey()->getColumnName()} = :_primaryKey
+                UPDATE `{$this->_tableMapping->getName()}` SET $setString 
+                WHERE `{$this->_tableMapping->getSimplePrimaryKey()->getColumnName()}` = :_primaryKey
             ");
 
             foreach ($data as $fieldName => $mapping) {
