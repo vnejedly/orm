@@ -72,8 +72,8 @@ abstract class AbstractEntityManager implements EntityManagerInterface
         $this->_dispatcherConnector->beforeDelete($this->getEventName(self::EVENT_PREFIX_DELETE_BEFORE), $this, $entity);
 
         $query = $this->_database->createQuery("
-            DELETE FROM {$this->_tableMapping->getName()} 
-            WHERE {$this->_tableMapping->getSimplePrimaryKey()->getColumnName()} = :primaryKey
+            DELETE FROM `{$this->_tableMapping->getName()}` 
+            WHERE `{$this->_tableMapping->getSimplePrimaryKey()->getColumnName()}` = :primaryKey
         ");
 
         $query->addParam('primaryKey', $primaryKey, Database::PARAM_INT);
