@@ -72,8 +72,8 @@ abstract class AbstractEntityManager implements EntityManagerInterface
         $this->_dispatcherConnector->beforeDelete($this->getEventName(self::EVENT_PREFIX_DELETE_BEFORE), $this, $entity);
 
         $query = $this->_database->createQuery("
-            DELETE FROM {$this->_tableMapping->getName()} 
-            WHERE {$this->_tableMapping->getSimplePrimaryKey()->getColumnName()} = :primaryKey
+            DELETE FROM `{$this->_tableMapping->getName()}` 
+            WHERE `{$this->_tableMapping->getSimplePrimaryKey()->getColumnName()}` = :primaryKey
         ");
 
         $query->addParam('primaryKey', $primaryKey, Database::PARAM_INT);
@@ -218,8 +218,8 @@ abstract class AbstractEntityManager implements EntityManagerInterface
             $setString = implode(', ', $parts);
 
             $query = $this->_database->createQuery("
-                UPDATE {$this->_tableMapping->getName()} SET $setString 
-                WHERE {$this->_tableMapping->getSimplePrimaryKey()->getColumnName()} = :_primaryKey
+                UPDATE `{$this->_tableMapping->getName()}` SET $setString 
+                WHERE `{$this->_tableMapping->getSimplePrimaryKey()->getColumnName()}` = :_primaryKey
             ");
 
             foreach ($data as $fieldName => $mapping) {
