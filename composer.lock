@@ -53,12 +53,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/vnejedly/data-objects.git",
-                "reference": "50e4bad26c6656f7887e6313094a9f986e633c78"
+                "reference": "51dfa4701407a732a821ab807c9601cbf3f90530"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/vnejedly/data-objects/zipball/50e4bad26c6656f7887e6313094a9f986e633c78",
-                "reference": "50e4bad26c6656f7887e6313094a9f986e633c78",
+                "url": "https://api.github.com/repos/vnejedly/data-objects/zipball/51dfa4701407a732a821ab807c9601cbf3f90530",
+                "reference": "51dfa4701407a732a821ab807c9601cbf3f90530",
                 "shasum": ""
             },
             "require": {
@@ -87,7 +87,7 @@
                 "data object",
                 "entity"
             ],
-            "time": "2018-01-25T16:17:04+00:00"
+            "time": "2018-02-25T18:25:48+00:00"
         },
         {
             "name": "hooloovoo/database",
@@ -95,12 +95,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/vnejedly/database.git",
-                "reference": "e4dde487aa28eb47ef54e61f52025748e5100204"
+                "reference": "015daae19cd497de6fecf6b1eb14bc7f48287a92"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/vnejedly/database/zipball/e4dde487aa28eb47ef54e61f52025748e5100204",
-                "reference": "e4dde487aa28eb47ef54e61f52025748e5100204",
+                "url": "https://api.github.com/repos/vnejedly/database/zipball/015daae19cd497de6fecf6b1eb14bc7f48287a92",
+                "reference": "015daae19cd497de6fecf6b1eb14bc7f48287a92",
                 "shasum": ""
             },
             "require": {
@@ -132,7 +132,7 @@
                 "replication",
                 "wrapper"
             ],
-            "time": "2017-10-01T22:24:27+00:00"
+            "time": "2018-03-07T09:54:31+00:00"
         },
         {
             "name": "hooloovoo/db-mapping",
@@ -269,12 +269,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/vnejedly/query-engine.git",
-                "reference": "6c44a243c71311b703294642a6cc7942c6a15b9d"
+                "reference": "c922a3beb01c12daeeac5cca6cb6127202924c4b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/vnejedly/query-engine/zipball/6c44a243c71311b703294642a6cc7942c6a15b9d",
-                "reference": "6c44a243c71311b703294642a6cc7942c6a15b9d",
+                "url": "https://api.github.com/repos/vnejedly/query-engine/zipball/c922a3beb01c12daeeac5cca6cb6127202924c4b",
+                "reference": "c922a3beb01c12daeeac5cca6cb6127202924c4b",
                 "shasum": ""
             },
             "require": {
@@ -305,7 +305,7 @@
                 "sorter",
                 "url query"
             ],
-            "time": "2017-12-11T18:43:04+00:00"
+            "time": "2018-02-08T12:44:25+00:00"
         }
     ],
     "packages-dev": [],
