@@ -34,8 +34,6 @@ use Hooloovoo\QueryEngine\Query\Query;
  * +-------------------------------------------------------+
  * ! this class is auto-generated, please do not change it !
  * +-------------------------------------------------------+
- *
- * <?= $generatedDateTime->format('c') ?>
  */
 class <?= $className ?> extends AbstractManager
 {

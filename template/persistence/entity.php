@@ -20,8 +20,6 @@ use <?= $import ?>;
  * ! this class is auto-generated, please do not change it !
  * +-------------------------------------------------------+
  *
- * <?= $generatedDateTime->format('c') ?>
- *
  <?php foreach ($fields as $field): ?>
  * @property <?= $field->getAnnotation() ?>
  <?php endforeach; ?>

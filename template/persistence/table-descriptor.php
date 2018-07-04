@@ -17,8 +17,6 @@ use Hooloovoo\DatabaseMapping\Descriptor\Table\TableInterface;
  * +-------------------------------------------------------+
  * ! this class is auto-generated, please do not change it !
  * +-------------------------------------------------------+
- *
- * <?= $generatedDateTime->format('c') ?>
  */
 class <?= $className ?> implements TableInterface
 {

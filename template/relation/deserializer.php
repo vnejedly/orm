@@ -27,8 +27,6 @@ use <?= $persistenceDeserializerNamespace ?>\<?= $entity ?>;
  * +-------------------------------------------------------+
  * ! this class is auto-generated, please do not change it !
  * +-------------------------------------------------------+
- *
- * <?= $generatedDateTime->format('c') ?>
  */
 class <?= $className ?> extends AbstractDeserializer
 {

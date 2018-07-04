@@ -16,8 +16,6 @@ use <?= $relationManagerGenericNamespace ?>\<?= $className ?> as GenericManager;
  * ! this class is an auto-generated stub - write anything you !
  * ! want into it, it will be preserved by next generator run  !
  * +-----------------------------------------------------------+
- *
- * <?= $generatedDateTime->format('c') ?>
  */
 class <?= $className ?> extends GenericManager
 {
