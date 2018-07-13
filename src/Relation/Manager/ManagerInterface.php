@@ -1,6 +1,7 @@
 <?php
 namespace Hooloovoo\ORM\Relation\Manager;
 
+use Hooloovoo\DataObjects\DataObjectInterface;
 use Hooloovoo\ORM\ComponentManagerInterface;
 use Hooloovoo\ORM\Persistence\EntityManagerInterface;
 use Hooloovoo\ORM\Relation\EQLQuery\EQLQueryInterface;
@@ -55,4 +56,9 @@ interface ManagerInterface extends ComponentManagerInterface
      * @return mixed[]
      */
     public function getByCondition(EQLQueryInterface $condition) : array ;
+
+    /**
+     * @param DataObjectInterface $dataObject
+     */
+    public function persistInternal(DataObjectInterface $dataObject);
 }

@@ -163,6 +163,16 @@ class <?= $className ?> extends AbstractManager
     }
 
     /**
+    * @param Entity $dataObject
+    * @param bool $returnObject
+    * @return Entity
+    */
+    public function persist(Entity $dataObject, bool $returnObject = true)
+    {
+        return $this->_persist($dataObject, $returnObject);
+    }
+
+    /**
      * @return <?= $parentComponent->getComponentEntityName() ?>PM
      */
     public function get<?= $parentComponent->getComponentEntityName() ?>PersistenceManager() : <?= $parentComponent->getComponentEntityName() ?>PM

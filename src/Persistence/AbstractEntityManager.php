@@ -82,6 +82,14 @@ abstract class AbstractEntityManager implements EntityManagerInterface
     }
 
     /**
+     * @param DataObjectInterface $dataObject
+     */
+    public function updateInternal(DataObjectInterface $dataObject)
+    {
+        $this->_updateByEntity($dataObject, false);
+    }
+
+    /**
      * @param array $fieldValues
      * @param bool $returnObject
      * @return mixed

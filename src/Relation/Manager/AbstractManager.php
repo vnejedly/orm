@@ -5,7 +5,10 @@ use Hooloovoo\Database\Database;
 use Hooloovoo\Database\Helper\TableLock;
 use Hooloovoo\DatabaseMapping\Table;
 use Hooloovoo\DataObjects\DataObjectInterface;
+use Hooloovoo\DataObjects\Field\FieldCollection;
+use Hooloovoo\DataObjects\Field\FieldDataObject;
 use Hooloovoo\ORM\ComponentManagerInterface;
+use Hooloovoo\ORM\Exception\NonOriginalEntityException;
 use Hooloovoo\ORM\Persistence\EntityManagerInterface;
 use Hooloovoo\ORM\Exception\EntityNotFoundException;
 use Hooloovoo\ORM\Exception\LogicException;
@@ -14,10 +17,8 @@ use Hooloovoo\ORM\Relation\EQLQuery\EQLQueryInterface;
 use Hooloovoo\ORM\Relation\EQLQuery\QueryEngineConnector;
 use Hooloovoo\ORM\Relation\GroupedArray;
 use Hooloovoo\ORM\Relation\Restrictor\Restrictor;
-use Hooloovoo\ORM\Utils\ArrayPager;
 use Hooloovoo\ORM\Utils\DataSetHelper;
 use Hooloovoo\QueryEngine\Query\Query;
-use Hooloovoo\QueryEngine\Sorter;
 
 /**
  * Class AbstractManager
@@ -141,6 +142,15 @@ abstract class AbstractManager implements ManagerInterface
     public function query(EQLQueryInterface $query) : array
     {
         return $this->_parentManager->getDatabase()->getConnectionSlave()->execute($query)->fetchAll(true);
+    }
+
+    /**
+     * @param DataObjectInterface $dataObject
+     * @return DataObjectInterface
+     */
+    public function persistInternal(DataObjectInterface $dataObject) : DataObjectInterface
+    {
+        return $this->_persist($dataObject, false);
     }
 
     /**
@@ -312,6 +322,44 @@ abstract class AbstractManager implements ManagerInterface
         }
 
         return (int) $this->_parentManager->getDatabase()->getConnectionSlave()->execute($query)->fetchOne()['cnt'];
+    }
+
+    /**
+     * @param DataObjectInterface $dataObject
+     * @param bool $returnObject
+     * @return mixed
+     */
+    protected function _persist(DataObjectInterface $dataObject, bool $returnObject = true)
+    {
+        $primaryKeyName = $this->getTableMapping()->getSimplePrimaryKey()->getEntityFieldName();
+        $primaryKeyValue = $dataObject->getField($primaryKeyName)->getValue();
+
+        if (is_null($primaryKeyValue)) {
+            throw new NonOriginalEntityException(get_class($dataObject));
+        }
+
+        if ($dataObject->isUnlocked()) {
+            $this->getParentManager()->updateInternal($dataObject);
+
+            foreach ($this->_relationManagers as $manager) {
+                $fieldName = lcfirst($manager->getTableMapping()->getEntityName());
+                $field = $dataObject->getField($fieldName);
+
+                if ($field->isUnlocked()) {
+                    if ($field instanceof FieldDataObject) {
+                        $manager->persistInternal($field->getValue());
+                    } elseif ($field instanceof FieldCollection) {
+                        foreach ($field->getValue() as $dataObject) {
+                            $manager->persistInternal($dataObject);
+                        }
+                    }
+                }
+            }
+        }
+
+        if ($returnObject) {
+            return $this->getByPrimaryKey($primaryKeyValue);
+        }
     }
 
     /**

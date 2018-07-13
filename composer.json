@@ -23,6 +23,6 @@
     "hooloovoo/database": "@dev",
     "hooloovoo/db-mapping": "@dev",
     "hooloovoo/generator": "@dev",
-    "hooloovoo/data-objects": "@dev"
+    "hooloovoo/data-objects": "dev-v-2.0"
   }
 }

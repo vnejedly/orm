@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "b2c13c40a5279b0cc3f90caf79b2f737",
+    "content-hash": "cc2a21f60f09f93a7b84f24522770747",
     "packages": [
         {
             "name": "hooloovoo/config",
@@ -49,16 +49,16 @@
         },
         {
             "name": "hooloovoo/data-objects",
-            "version": "dev-master",
+            "version": "dev-v-2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/vnejedly/data-objects.git",
-                "reference": "51dfa4701407a732a821ab807c9601cbf3f90530"
+                "reference": "3a911d226d92b526fded6f7063e391441daa542b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/vnejedly/data-objects/zipball/51dfa4701407a732a821ab807c9601cbf3f90530",
-                "reference": "51dfa4701407a732a821ab807c9601cbf3f90530",
+                "url": "https://api.github.com/repos/vnejedly/data-objects/zipball/3a911d226d92b526fded6f7063e391441daa542b",
+                "reference": "3a911d226d92b526fded6f7063e391441daa542b",
                 "shasum": ""
             },
             "require": {
@@ -87,7 +87,7 @@
                 "data object",
                 "entity"
             ],
-            "time": "2018-02-25T18:25:48+00:00"
+            "time": "2018-07-13T18:17:32+00:00"
         },
         {
             "name": "hooloovoo/database",
