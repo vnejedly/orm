@@ -146,11 +146,10 @@ abstract class AbstractManager implements ManagerInterface
 
     /**
      * @param DataObjectInterface $dataObject
-     * @return DataObjectInterface
      */
-    public function persistInternal(DataObjectInterface $dataObject) : DataObjectInterface
+    public function persistInternal(DataObjectInterface $dataObject)
     {
-        return $this->_persist($dataObject, false);
+        $this->_persist($dataObject, false);
     }
 
     /**
@@ -339,7 +338,27 @@ abstract class AbstractManager implements ManagerInterface
         }
 
         if ($dataObject->isUnlocked()) {
-            $this->getParentManager()->updateInternal($dataObject);
+            $parentManager = $this->getParentManager();
+            $parentManager->updateInternal($dataObject);
+
+            foreach ($this->_persistenceManagers as $manager) {
+                if ($manager->getTableMapping()->getName() == $parentManager->getTableMapping()->getName()) {
+                    continue;
+                }
+
+                $fieldName = lcfirst($manager->getTableMapping()->getEntityName());
+                $field = $dataObject->getField($fieldName);
+
+                if ($field->isUnlocked()) {
+                    if ($field instanceof FieldDataObject) {
+                        $manager->updateInternal($field->getValue());
+                    } elseif ($field instanceof FieldCollection) {
+                        foreach ($field->getValue() as $childObject) {
+                            $manager->updateInternal($childObject);
+                        }
+                    }
+                }
+            }
 
             foreach ($this->_relationManagers as $manager) {
                 $fieldName = lcfirst($manager->getTableMapping()->getEntityName());
@@ -349,8 +368,8 @@ abstract class AbstractManager implements ManagerInterface
                     if ($field instanceof FieldDataObject) {
                         $manager->persistInternal($field->getValue());
                     } elseif ($field instanceof FieldCollection) {
-                        foreach ($field->getValue() as $dataObject) {
-                            $manager->persistInternal($dataObject);
+                        foreach ($field->getValue() as $childObject) {
+                            $manager->persistInternal($childObject);
                         }
                     }
                 }
