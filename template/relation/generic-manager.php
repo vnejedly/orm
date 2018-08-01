@@ -15,7 +15,7 @@ namespace <?= $relationManagerGenericNamespace ?>;
 <?php if ($field->isPersistence()): ?>
 use <?= $persistenceManagerNamespace ?>\<?= $field->getFieldEntityName() ?> as <?= $field->getFieldEntityManagerAlias() ?>;
 <?php else: ?>
-use <?= $relationManagerGenericNamespace ?>\<?= $field->getFieldEntityName() ?>  as <?= $field->getFieldEntityManagerAlias() ?>;
+use <?= $relationManagerNamespace ?>\<?= $field->getFieldEntityName() ?>  as <?= $field->getFieldEntityManagerAlias() ?>;
 <?php endif; ?>
 <?php endforeach; ?>
 use <?= $persistenceManagerNamespace ?>\<?= $parentComponent->getComponentEntityName() ?> as <?= $parentComponent->getComponentEntityName() ?>PM;

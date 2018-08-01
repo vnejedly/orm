@@ -334,7 +334,7 @@ abstract class AbstractManager implements ManagerInterface
         $primaryKeyValue = $dataObject->getField($primaryKeyName)->getValue();
 
         if (is_null($primaryKeyValue)) {
-            throw new NonOriginalEntityException(get_class($dataObject));
+            return null;
         }
 
         if ($dataObject->isUnlocked()) {
