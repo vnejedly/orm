@@ -1,7 +1,7 @@
 <?= '<?php' ?>
 <?php /**
  * @var DateTime $generatedDateTime
- * @var string $entityManagerNamespace
+ * @var string $genericManagerNamespace
  * @var string $tableDescriptorNamespace
  * @var string $entityNamespace
  * @var string $managerName
@@ -12,7 +12,7 @@
  * @var string[] $imports
  * @var string[] $valueClassImports
  */ ?>
-namespace <?= $entityManagerNamespace ?>;
+namespace <?= $genericManagerNamespace ?>;
 
 use Hooloovoo\Database\Database;
 use Hooloovoo\ORM\Persistence\EQLQuery;
