@@ -1,6 +1,7 @@
 <?php
 namespace Hooloovoo\ORM\Generator\Relation\Definer;
 
+use Hooloovoo\DataObjects\DataObject;
 use Hooloovoo\ORM\Generator\Relation\Definer\Component\ComponentTable;
 use Hooloovoo\ORM\Generator\Relation\Definer\Joint\JointInterface;
 
@@ -115,6 +116,18 @@ class FieldInfo
         }
 
         return "$hint \${$this->getFieldName()}";
+    }
+
+    /**
+     * @return string
+     */
+    public function getCollectionSingleAnnotation(): string
+    {
+        $hint = $this->_joint->getChild()->getComponentEntityName();
+        $prefix = DataObject::COLLECTION_SINGLE_PREFIX;
+        $suffix = ucfirst($this->getFieldName());
+
+        return "$hint {$prefix}{$suffix}()";
     }
 
     /**

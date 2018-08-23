@@ -234,8 +234,18 @@ abstract class AbstractManager implements ManagerInterface
             $restrictor = $this->getRestrictor();
         }
 
+        $allowedRestrictorComponents = [];
+        foreach ($this->_componentManagers as $componentManager) {
+            if (
+                !$componentManager instanceof EntityManagerInterface ||
+                !$this->isParentManager($componentManager)
+            ) {
+                $allowedRestrictorComponents[] = $componentManager->getTableMapping()->getEntityName();
+            }
+        }
+
         $query = $this->getBasicCompositeSelect('{*.$}', $restrictor);
-        $restrictor->parametrizeQuery($query);
+        $restrictor->parametrizeQuery($query, $allowedRestrictorComponents);
 
         $query->append($condition->getQueryString());
         foreach ($condition->getParams() as $name => $param) {
@@ -246,7 +256,6 @@ abstract class AbstractManager implements ManagerInterface
         $dataSetHelper = new DataSetHelper($resultSet);
 
         $collections = [];
-
         foreach ($this->_persistenceManagers as $componentManager) {
             $tableName = $componentManager->getTableMapping()->getName();
             $collections[$tableName] = $componentManager->getCollectionFromPrefixedResultSet($resultSet);
@@ -258,7 +267,8 @@ abstract class AbstractManager implements ManagerInterface
             $prefixedPKName = "$tableName.$primaryKeyName";
 
             $collections[$tableName] = $componentManager->getByPrimaryKeys(
-                $dataSetHelper->getColumnValues($prefixedPKName, true, true)
+                $dataSetHelper->getColumnValues($prefixedPKName, true, true),
+                $restrictor
             );
         }
 

@@ -30,6 +30,12 @@ use <?= $persistenceEntityNamespace ?>\<?= $entity ?>;
  <?php foreach ($fields as $field): ?>
  * @property <?= $field->getAnnotation() ?>
  <?php endforeach; ?>
+ *
+ <?php foreach ($fields as $field): ?>
+ <?php if ($field->isCollection()): ?>
+ * @method <?= $field->getCollectionSingleAnnotation() ?>
+ <?php endif; ?>
+ <?php endforeach; ?>
  */
 class <?= $className ?> extends ParentComponent
 {

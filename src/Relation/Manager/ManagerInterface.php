@@ -5,6 +5,7 @@ use Hooloovoo\DataObjects\DataObjectInterface;
 use Hooloovoo\ORM\ComponentManagerInterface;
 use Hooloovoo\ORM\Persistence\EntityManagerInterface;
 use Hooloovoo\ORM\Relation\EQLQuery\EQLQueryInterface;
+use Hooloovoo\ORM\Relation\Restrictor\Restrictor;
 
 /**
  * Interface ManagerInterface
@@ -41,9 +42,10 @@ interface ManagerInterface extends ComponentManagerInterface
 
     /**
      * @param int[] $primaryKeys
+     * @param Restrictor|null $restrictor
      * @return mixed[]
      */
-    public function getByPrimaryKeys(array $primaryKeys) : array ;
+    public function getByPrimaryKeys(array $primaryKeys, Restrictor $restrictor = null) : array ;
 
     /**
      * @param EQLQueryInterface $condition

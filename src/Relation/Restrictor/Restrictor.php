@@ -1,5 +1,6 @@
 <?php
 namespace Hooloovoo\ORM\Relation\Restrictor;
+
 use Hooloovoo\Database\Query\Param\MultiParam;
 use Hooloovoo\Database\Query\Param\Param;
 use Hooloovoo\ORM\Relation\EQLQuery\EQLQueryInterface;
@@ -12,10 +13,10 @@ class Restrictor
     /** @var string[] */
     protected $restrictions = [];
 
-    /** @var Param[] */
+    /** @var Param[][] */
     protected $params = [];
 
-    /** @var MultiParam[] */
+    /** @var MultiParam[][] */
     protected $multiParams = [];
 
     /**
@@ -41,36 +42,45 @@ class Restrictor
     }
 
     /**
+     * @param string $componentName
      * @param string $name
      * @param $value
      * @param int $type
      */
-    public function addParam(string $name, $value, int $type)
+    public function addParam(string $componentName, string $name, $value, int $type)
     {
-        $this->params[$name] = new Param($type, $value);
+        $this->params[$componentName][$name] = new Param($type, $value);
     }
 
     /**
+     * @param string $componentName
      * @param string $name
-     * @param mixed[] $values
+     * @param array $values
      * @param int $type
      */
-    public function addMultiParam(string $name, array $values, int $type)
+    public function addMultiParam(string $componentName, string $name, array $values, int $type)
     {
-        $this->multiParams[$name] = new MultiParam($name, $type, $values);
+        $this->multiParams[$componentName][$name] = new MultiParam($name, $type, $values);
     }
 
     /**
      * @param EQLQueryInterface $eqlQuery
+     * @param string[] $componentNames
      */
-    public function parametrizeQuery(EQLQueryInterface $eqlQuery)
+    public function parametrizeQuery(EQLQueryInterface $eqlQuery, array $componentNames)
     {
-        foreach ($this->params as $name => $param) {
-            $eqlQuery->addParam($name, $param->getValue(), $param->getType());
-        }
+        foreach ($componentNames as $componentName) {
+            if (array_key_exists($componentName, $this->params)) {
+                foreach ($this->params[$componentName] as $name => $param) {
+                    $eqlQuery->addParam($name, $param->getValue(), $param->getType());
+                }
+            }
 
-        foreach ($this->multiParams as $name => $multiParam) {
-            $eqlQuery->addParam($name, $multiParam->getValue(), $multiParam->getType());
+            if (array_key_exists($componentName, $this->multiParams)) {
+                foreach ($this->multiParams[$componentName] as $name => $multiParam) {
+                    $eqlQuery->addMultiParam($name, $multiParam->getValues(), $multiParam->getType());
+                }
+            }
         }
     }
 }
