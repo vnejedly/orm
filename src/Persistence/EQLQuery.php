@@ -89,7 +89,7 @@ class EQLQuery extends DatabaseQuery
 
         foreach ($this->_tableMapping->getColumns() as $column) {
             $placeholders[] = self::CH_OPEN . "{$column->getEntityFieldName()}" . self::CH_CLOSE;
-            $replacements[] = $column->getColumnName();
+            $replacements[] = "`{$column->getColumnName()}`";
         }
 
         return str_replace($placeholders, $replacements, $this->_queryString);
