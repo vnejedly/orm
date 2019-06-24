@@ -17,6 +17,7 @@ $container->addDefinitionClass(new \Hooloovoo\ORM\Generator\Relation\ContainerDe
 $entityDir = $projectRoot . '/src/' . $relation['directory'] . '/Entity';
 $genericManagerDir = $projectRoot . '/src/' . $relation['directory'] . '/GenericManager';
 $managerDir = $projectRoot . '/src/' . $relation['directory'] . '/Manager';
+$deserializerDir = $projectRoot . '/src/' . $relation['directory'] . '/Deserializer';
 
 $relationEntityNamespace = $relation['namespace'] . '\\Entity';
 $persistenceEntityNamespace = $persistence['namespace'] . '\\Entity';
@@ -29,6 +30,7 @@ $persistenceDeserializerNamespace = $persistence['namespace'] . '\\Deserializer'
 if (!is_dir($entityDir)) mkdir($entityDir);
 if (!is_dir($genericManagerDir)) mkdir($genericManagerDir);
 if (!is_dir($managerDir)) mkdir($managerDir);
+if (!is_dir($deserializerDir)) mkdir($deserializerDir);
 
 /** @var \Hooloovoo\Generator\Generator $entitiesGenerator */
 $generator = $container->get(Hooloovoo\Generator\Generator::class);
@@ -43,4 +45,5 @@ $generator->setExternalVariable('relationDeserializerNamespace', $relationDeseri
 $generator->addPattern(new \Hooloovoo\Generator\Pattern\MultiFile($entityDir, __DIR__ . '/../template/relation/entity.php'));
 $generator->addPattern(new \Hooloovoo\Generator\Pattern\MultiFile($genericManagerDir, __DIR__ . '/../template/relation/generic-manager.php'));
 $generator->addPattern(new \Hooloovoo\Generator\Pattern\MultiFile($managerDir, __DIR__ . '/../template/relation/manager.php', false));
+$generator->addPattern(new \Hooloovoo\Generator\Pattern\MultiFile($deserializerDir, __DIR__ . '/../template/relation/deserializer.php'));
 $generator->run();

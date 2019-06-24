@@ -14,7 +14,7 @@
  */ ?>
 namespace <?= $relationDeserializerNamespace ?>;
 
-use <?= $projectNamespace ?>\Relation\AbstractDeserializer;
+use Hooloovoo\ORM\Relation\Deserializer\AbstractDeserializer;
 use <?= $relationEntityNamespace ?>\<?= $className ?> as Entity;
 use <?= $persistenceDeserializerNamespace ?>\<?= $parentComponent->getComponentEntityName() ?> as ParentDeserializer;
 <?php foreach ($importEntities as $entity): ?>
