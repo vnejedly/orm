@@ -62,6 +62,7 @@ class <?= $className ?> extends AbstractManager
         $this->addRelationManager($<?= $field->getFieldEntityManagerVariableName() ?>);
         <?php endif; ?>
         <?php endforeach; ?>
+        $this->customInit();
     }
 
     /**
@@ -200,4 +201,9 @@ class <?= $className ?> extends AbstractManager
     }
     <?php endif; ?>
     <?php endforeach; ?>
+
+    /**
+     * A dummy method for custom setup
+     */
+    protected function customInit() {}
 }
