@@ -42,11 +42,15 @@ abstract class AbstractDeserializer implements DeserializerInterface
 
     /**
      * @param string $fieldName
-     * @param array $data
+     * @param array|null $data
      * @return mixed
      */
-    protected function deserializeField(string $fieldName, array $data)
+    protected function deserializeField(string $fieldName, ?array $data)
     {
+        if (is_null($data)) {
+            return null;
+        }
+
         return $this->deserializers[$fieldName]->deserialize($data);
     }
 
