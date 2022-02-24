@@ -29,10 +29,10 @@ use <?= $import ?>;
 class <?= $entityName ?> implements DeserializerInterface
 {
     /**
-     * @param array|null $data
+     * @param array $data
      * @return Entity
      */
-    public function deserialize(?array $data = null)
+    public function deserialize(array $data = null)
     {
         if (is_null($data)) {
             return null;
